@@ -6,7 +6,9 @@ import Navbar from "@/components/navbar"
 import { ThemeProvider } from "@/components/theme-provider"
 import { AuthProvider } from "@/contexts/auth-context"
 import { CartProvider } from "@/contexts/cart-context"
+import { LikesProvider } from "@/contexts/likes-context"
 import { Toaster } from "@/components/ui/toaster"
+import { OrdersProvider } from "@/contexts/orders-context"
 
 const inter = Inter({ subsets: ["latin"] })
 
@@ -27,9 +29,13 @@ export default function RootLayout({
         <ThemeProvider attribute="class" defaultTheme="dark" enableSystem>
           <AuthProvider>
             <CartProvider>
-              <Navbar />
-              {children}
-              <Toaster />
+              <OrdersProvider>
+                <LikesProvider>
+                  <Navbar />
+                  {children}
+                  <Toaster />
+                </LikesProvider>
+              </OrdersProvider>
             </CartProvider>
           </AuthProvider>
         </ThemeProvider>

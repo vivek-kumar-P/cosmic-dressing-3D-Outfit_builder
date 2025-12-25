@@ -94,7 +94,7 @@ export default function CreateOutfitPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-[#0A0A1A] via-[#1A1A3A] to-[#2A1A4A] p-4">
+    <div className="min-h-screen bg-gradient-to-br from-[#0A0A1A] via-[#1A1A3A] to-[#2A1A4A] p-4 pt-24">
       <div className="max-w-7xl mx-auto space-y-6">
         {/* Header */}
         <div className="flex items-center justify-between">
@@ -142,7 +142,7 @@ export default function CreateOutfitPage() {
               <CardHeader>
                 <CardTitle className="flex items-center">
                   <Sparkles className="h-5 w-5 mr-2 text-[#00C4B4]" />
-                  3D Outfit Preview
+                  Outfit Preview
                 </CardTitle>
                 <CardDescription>Visualize your outfit in real-time</CardDescription>
               </CardHeader>
@@ -160,9 +160,9 @@ export default function CreateOutfitPage() {
                         variant="outline"
                         className="border-[#00C4B4]/50 text-[#00C4B4] hover:bg-[#00C4B4]/10 bg-transparent"
                       >
-                        <Link href="/3d-playground">
+                        <Link href="/outfit-picker">
                           <Zap className="h-4 w-4 mr-2" />
-                          Open 3D Studio
+                          Open Outfit Builder
                         </Link>
                       </Button>
                     </div>

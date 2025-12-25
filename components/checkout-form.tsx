@@ -2,7 +2,8 @@
 
 import type React from "react"
 
-import { useState } from "react"
+import { useEffect, useMemo, useState } from "react"
+import { useRouter } from "next/navigation"
 import { gsap } from "gsap"
 import Link from "next/link"
 import { Card, CardContent } from "@/components/ui/card"
@@ -11,72 +12,77 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Separator } from "@/components/ui/separator"
 import { ArrowLeft, Check, Star } from "lucide-react"
-
-// Mock outfit items (these would typically come from context or state)
-const mockOutfitItems = [
-  { id: 1, name: "Cosmic T-Shirt", price: 35 },
-  { id: 3, name: "Stardust Jeans", price: 55 },
-  { id: 5, name: "Orbit Belt", price: 25 },
-]
+import { useCart } from "@/contexts/cart-context"
+import { useOrders } from "@/contexts/orders-context"
+import { useAuth } from "@/contexts/auth-context"
+import { calculateTotals } from "@/lib/pricing"
 
 export default function CheckoutForm() {
-  const [items] = useState(mockOutfitItems)
+  const router = useRouter()
+  const { items: cartItems, clearCart } = useCart()
+  const { placeOrder } = useOrders()
+  const { profile } = useAuth()
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [isComplete, setIsComplete] = useState(false)
+  const [formError, setFormError] = useState<string | null>(null)
 
-  // Calculate total price
-  const totalPrice = items.reduce((sum, item) => sum + item.price, 0)
+  const [firstName, setFirstName] = useState("")
+  const [lastName, setLastName] = useState("")
+  const [email, setEmail] = useState("")
+  const [address, setAddress] = useState("")
+  const [city, setCity] = useState("")
+  const [zipCode, setZipCode] = useState("")
 
-  const handleSubmit = (e: React.FormEvent) => {
+  useEffect(() => {
+    if (!profile) return
+    // Split full name conservatively into first/last tokens
+    const tokens = (profile.full_name || "").trim().split(" ")
+    setFirstName(tokens[0] || "")
+    setLastName(tokens.slice(1).join(" "))
+    setEmail(profile.email || "")
+    setAddress(profile.street_address || "")
+    setCity(profile.city || "")
+    setZipCode(profile.postal_code || "")
+  }, [profile])
+
+  const { subtotal, shipping, tax, total } = calculateTotals({ items: cartItems })
+
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
+    if (cartItems.length === 0) {
+      setFormError("Your cart is empty. Add items before checkout.")
+      router.push("/cart")
+      return
+    }
     setIsSubmitting(true)
+    const name = `${firstName.trim()} ${lastName.trim()}`.trim()
 
-    // Simulate form submission
     setTimeout(() => {
-      setIsSubmitting(false)
+      // Build order items from cart
+      const itemsForOrder = cartItems.map((ci) => ({
+        id: ci.id,
+        name: ci.name,
+        price: ci.price,
+        quantity: ci.quantity,
+        image: ci.image,
+        modelUrl: ci.modelUrl,
+        color: ci.color,
+      }))
 
-      // Show success animation
-      gsap.to(".checkout-form", {
-        opacity: 0,
-        y: 20,
-        duration: 0.5,
-        ease: "power2.in",
-        onComplete: () => {
-          setIsComplete(true)
-
-          // Animate success message
-          gsap.fromTo(
-            ".success-message",
-            { opacity: 0, scale: 0.9 },
-            {
-              opacity: 1,
-              scale: 1,
-              duration: 0.5,
-              ease: "back.out",
-            },
-          )
-
-          // Animate stars
-          gsap.fromTo(
-            ".success-star",
-            {
-              opacity: 0,
-              scale: 0,
-              rotate: -180,
-            },
-            {
-              opacity: 1,
-              scale: 1,
-              rotate: 0,
-              duration: 0.8,
-              stagger: 0.1,
-              ease: "elastic.out(1, 0.5)",
-              delay: 0.3,
-            },
-          )
-        },
+      const orderId = placeOrder({
+        email,
+        items: itemsForOrder,
+        shippingAddress: name || address ? { name, address, city, zipCode } : undefined,
+        subtotal,
+        shipping,
+        tax,
+        total,
       })
-    }, 2000)
+
+      clearCart()
+      setIsSubmitting(false)
+      router.push(`/order-confirmation/${orderId}`)
+    }, 1200)
   }
 
   return (
@@ -87,10 +93,12 @@ export default function CheckoutForm() {
             <h2 className="text-xl font-bold mb-4">Order Summary</h2>
 
             <div className="space-y-3 mb-4">
-              {items.map((item) => (
+              {cartItems.map((item) => (
                 <div key={item.id} className="flex justify-between">
-                  <span>{item.name}</span>
-                  <span>${item.price}</span>
+                  <span>
+                    {item.name} × {item.quantity}
+                  </span>
+                  <span>${(item.price * item.quantity).toFixed(2)}</span>
                 </div>
               ))}
             </div>
@@ -99,12 +107,14 @@ export default function CheckoutForm() {
 
             <div className="flex justify-between font-bold">
               <span>Total</span>
-              <span className="text-[#00C4B4]">${totalPrice}</span>
+                <span className="text-[#00C4B4]">${total.toFixed(2)}</span>
             </div>
           </div>
 
           <form onSubmit={handleSubmit}>
             <h2 className="text-xl font-bold mb-4">Shipping Information</h2>
+
+            {formError && <p className="text-red-400 text-sm mb-3">{formError}</p>}
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
               <div className="space-y-2">
@@ -113,6 +123,8 @@ export default function CheckoutForm() {
                   id="firstName"
                   placeholder="Enter your first name"
                   required
+                  value={firstName}
+                  onChange={(e) => setFirstName(e.target.value)}
                   className="bg-[#0A0A1A] border-zinc-700"
                 />
               </div>
@@ -123,6 +135,8 @@ export default function CheckoutForm() {
                   id="lastName"
                   placeholder="Enter your last name"
                   required
+                  value={lastName}
+                  onChange={(e) => setLastName(e.target.value)}
                   className="bg-[#0A0A1A] border-zinc-700"
                 />
               </div>
@@ -134,6 +148,8 @@ export default function CheckoutForm() {
                   type="email"
                   placeholder="Enter your email address"
                   required
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
                   className="bg-[#0A0A1A] border-zinc-700"
                 />
               </div>
@@ -144,13 +160,22 @@ export default function CheckoutForm() {
                   id="address"
                   placeholder="Enter your street address"
                   required
+                  value={address}
+                  onChange={(e) => setAddress(e.target.value)}
                   className="bg-[#0A0A1A] border-zinc-700"
                 />
               </div>
 
               <div className="space-y-2">
                 <Label htmlFor="city">City</Label>
-                <Input id="city" placeholder="Enter your city" required className="bg-[#0A0A1A] border-zinc-700" />
+                <Input
+                  id="city"
+                  placeholder="Enter your city"
+                  required
+                  value={city}
+                  onChange={(e) => setCity(e.target.value)}
+                  className="bg-[#0A0A1A] border-zinc-700"
+                />
               </div>
 
               <div className="space-y-2">
@@ -159,6 +184,8 @@ export default function CheckoutForm() {
                   id="zipCode"
                   placeholder="Enter your zip code"
                   required
+                  value={zipCode}
+                  onChange={(e) => setZipCode(e.target.value)}
                   className="bg-[#0A0A1A] border-zinc-700"
                 />
               </div>
@@ -166,8 +193,8 @@ export default function CheckoutForm() {
 
             <div className="flex flex-col sm:flex-row gap-3">
               <Button asChild variant="outline" className="border-zinc-700 flex-1" disabled={isSubmitting}>
-                <Link href="/preview">
-                  <ArrowLeft className="mr-2 h-4 w-4" /> Back to Preview
+                <Link href="/cart">
+                  <ArrowLeft className="mr-2 h-4 w-4" /> Back to Cart
                 </Link>
               </Button>
 

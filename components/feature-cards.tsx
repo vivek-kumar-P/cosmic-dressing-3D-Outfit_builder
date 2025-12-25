@@ -10,10 +10,10 @@ import Link from "next/link"
 const features = [
   {
     icon: Palette,
-    title: "3D Outfit Builder",
+    title: "Outfit Builder",
     description:
-      "Visualize your perfect outfit in stunning 3D before you buy. Mix and match pieces to create your unique style.",
-    link: "/3d-playground",
+      "Visualize your perfect outfit before you buy. Mix and match pieces to create your unique style.",
+    link: "/outfit-picker",
     color: "from-purple-500 to-pink-500",
   },
   {

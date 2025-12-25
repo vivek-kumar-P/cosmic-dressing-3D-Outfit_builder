@@ -29,7 +29,6 @@ src/
 │   │   ├── cart/
 │   │   └── checkout/
 │   ├── (studio)/                 # Creative tools
-│   │   ├── 3d-playground/
 │   │   └── outfit-picker/
 │   ├── api/                      # API routes
 │   ├── globals.css
@@ -42,7 +41,6 @@ src/
 │   ├── gallery/                  # Gallery components
 │   ├── profile/                  # Profile components
 │   ├── cart/                     # Shopping cart components
-│   ├── 3d/                       # 3D visualization components
 │   └── layout/                   # Layout components (navbar, footer)
 ├── contexts/                     # React contexts
 ├── hooks/                        # Custom hooks
@@ -259,8 +257,7 @@ Dashboard (/dashboard)
     │   ├── Cart (/cart) → Checkout (/checkout)
     │   └── Order History (/orders)
     └── Creative Tools
-        ├── 3D Playground (/3d-playground)
-        └── Outfit Picker (/outfit-picker)
+      └── Outfit Picker (/outfit-picker)
 \`\`\`
 
 ### 3. Navigation Hierarchy
@@ -269,7 +266,7 @@ Primary Navigation:
 ├── Home (/)
 ├── Gallery (/gallery)
 ├── Customize (/customize)
-├── 3D Studio (/3d-playground)
+├── Outfit Builder (/outfit-picker)
 └── Profile Menu
     ├── Dashboard (/dashboard)
     ├── Profile (/profile)

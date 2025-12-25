@@ -1,6 +1,7 @@
 "use client"
 
 import { motion } from "framer-motion"
+import Link from "next/link"
 import { ArrowRight, Palette, Eye, ShoppingBag, Share2 } from "lucide-react"
 
 const steps = [
@@ -106,10 +107,12 @@ export default function HowItWorks() {
           viewport={{ once: true }}
           className="text-center mt-16"
         >
-          <div className="inline-flex items-center px-6 py-3 bg-gradient-to-r from-purple-600 to-blue-600 text-white font-semibold rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 cursor-pointer group">
-            Get Started Today
-            <ArrowRight className="ml-2 w-5 h-5 group-hover:translate-x-1 transition-transform" />
-          </div>
+          <Link href="/outfit-picker">
+            <div className="inline-flex items-center px-6 py-3 bg-gradient-to-r from-purple-600 to-blue-600 text-white font-semibold rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 cursor-pointer group">
+              Get Started Today
+              <ArrowRight className="ml-2 w-5 h-5 group-hover:translate-x-1 transition-transform" />
+            </div>
+          </Link>
         </motion.div>
       </div>
     </section>

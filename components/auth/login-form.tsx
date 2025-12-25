@@ -38,13 +38,14 @@ export default function LoginForm() {
       const result = await signIn(formData.email, formData.password)
 
       if (result.success) {
+        // Immediately redirect without waiting for profile fetch
         router.push("/dashboard")
       } else {
         setError(result.error || "Failed to sign in")
+        setIsLoading(false)
       }
     } catch (err) {
       setError("An unexpected error occurred")
-    } finally {
       setIsLoading(false)
     }
   }

@@ -1,53 +1,26 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useEffect, useState } from "react"
 import { gsap } from "gsap"
-import { ArrowLeft, Palette, Shirt, Users, Save, Share2, Download } from "lucide-react"
+import { ArrowLeft, Save, Wand2 } from "lucide-react"
+import Link from "next/link"
+import { useSnapshot } from "valtio"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { Badge } from "@/components/ui/badge"
-import Link from "next/link"
-import SizeSelection from "@/components/size-selection"
 import CanvasStage from "@/components/customizer/CanvasStage"
-import CustomTabs from "@/components/customizer/controls/Tabs"
 import ColorPicker from "@/components/customizer/controls/ColorPicker"
 import FilePicker from "@/components/customizer/controls/FilePicker"
-import LogoPresets from "@/components/customizer/controls/LogoPresets"
 import LogoGrid from "@/components/customizer/controls/LogoGrid"
-import ChatBot from "@/components/customizer/ChatBot"
+import LogoPresets from "@/components/customizer/controls/LogoPresets"
 import ScreenshotButton from "@/components/customizer/ScreenshotButton"
-
-const categories = [
-  { id: "tops", name: "Tops", icon: <Shirt className="h-4 w-4" />, count: 24 },
-  { id: "bottoms", name: "Bottoms", icon: <Shirt className="h-4 w-4" />, count: 18 },
-  { id: "shoes", name: "Shoes", icon: <Shirt className="h-4 w-4" />, count: 12 },
-  { id: "accessories", name: "Accessories", icon: <Shirt className="h-4 w-4" />, count: 8 },
-]
-
-const colors = [
-  "#FF6B6B",
-  "#4ECDC4",
-  "#45B7D1",
-  "#96CEB4",
-  "#FFEAA7",
-  "#DDA0DD",
-  "#98D8C8",
-  "#F7DC6F",
-  "#BB8FCE",
-  "#85C1E9",
-  "#F8C471",
-  "#82E0AA",
-  "#F1948A",
-  "#85C1E9",
-  "#D7BDE2",
-  "#A3E4D7",
-]
+import { customizationState } from "@/components/customizer/CustomizationStore"
+import { useCart } from "@/contexts/cart-context"
+import { toast } from "@/hooks/use-toast"
 
 export default function CustomizePage() {
-  const [selectedCategory, setSelectedCategory] = useState("tops")
-  const [selectedColor, setSelectedColor] = useState("#FF6B6B")
-  const [selectedSize, setSelectedSize] = useState("M")
+  const snap = useSnapshot(customizationState)
+  const { addItem } = useCart()
+  const [isSaving, setIsSaving] = useState(false)
 
   useEffect(() => {
     // Page entrance animations
@@ -60,8 +33,45 @@ export default function CustomizePage() {
     )
   }, [])
 
+  const handleSaveToCart = async () => {
+    setIsSaving(true)
+    const fallbackImage =
+      "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR4nGNgYAAAAAMAASsJTYQAAAAASUVORK5CYII="
+
+    try {
+      const canvas = document.querySelector("canvas") as HTMLCanvasElement | null
+      const image = canvas ? canvas.toDataURL("image/png") : fallbackImage
+      const id = Date.now()
+
+      addItem({
+        id,
+        name: "Custom T-Shirt",
+        category: "custom",
+        price: 49,
+        image,
+        modelUrl: "/models/shirt_baked.glb",
+        color: snap.color,
+        description: snap.isLogoTexture || snap.isFullTexture ? "Custom print applied" : "Solid color tee",
+      })
+
+      toast({
+        title: "Added to cart",
+        description: "Your custom tee was saved with the current color and logo.",
+      })
+    } catch (error) {
+      console.error("Failed to save custom tee", error)
+      toast({
+        title: "Could not save",
+        description: "Please try again.",
+        variant: "destructive",
+      })
+    } finally {
+      setIsSaving(false)
+    }
+  }
+
   return (
-    <div className="min-h-screen bg-gradient-to-br from-[#0a0a1a] via-[#1a1a3a] to-[#2a1a4a] text-white pt-20 pb-8">
+    <div className="min-h-screen bg-gradient-to-br from-[#0a0a1a] via-[#1a1a3a] to-[#2a1a4a] text-white pt-24 pb-8">
       <div className="max-w-7xl mx-auto px-4 md:px-8">
         {/* Header */}
         <div className="customize-header flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-6 md:mb-8">
@@ -86,20 +96,13 @@ export default function CustomizePage() {
 
           <div className="flex items-center gap-2 w-full sm:w-auto">
             <Button
-              variant="outline"
+              onClick={handleSaveToCart}
               size="sm"
-              className="border-white/20 bg-white/10 text-white hover:bg-white/20 flex-1 sm:flex-none"
+              className="bg-gradient-to-r from-[#00c4b4] to-[#007bff] text-white hover:opacity-90 flex-1 sm:flex-none"
+              disabled={isSaving}
             >
               <Save className="h-4 w-4 mr-2" />
-              <span className="hidden sm:inline">Save</span>
-            </Button>
-            <Button
-              variant="outline"
-              size="sm"
-              className="border-white/20 bg-white/10 text-white hover:bg-white/20 flex-1 sm:flex-none"
-            >
-              <Share2 className="h-4 w-4 mr-2" />
-              <span className="hidden sm:inline">Share</span>
+              {isSaving ? "Saving..." : "Save to Cart"}
             </Button>
             <ScreenshotButton />
           </div>
@@ -123,124 +126,62 @@ export default function CustomizePage() {
           {/* Customization Panel */}
           <div className="order-1 lg:order-2">
             <Card className="bg-gradient-to-br from-white/10 to-white/5 backdrop-blur-xl border border-white/20">
-              <CardContent className="p-4 md:p-6">
-                {/* T-Shirt Customizer Controls */}
-                <div className="space-y-4 mb-6">
-                  <div className="flex items-center justify-between">
-                    <h2 className="text-sm font-semibold text-gray-300">T‑Shirt Customizer</h2>
+              <CardContent className="p-4 md:p-6 space-y-6">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <h2 className="text-sm font-semibold text-gray-200 flex items-center gap-2">
+                      <Wand2 className="h-4 w-4" /> Live T-Shirt Customizer
+                    </h2>
+                    <p className="text-xs text-gray-400">Changes apply instantly to the 3D preview.</p>
                   </div>
-                  <CustomTabs active={"color"} onChange={() => {}} />
+                  <span className="text-xs text-gray-400">Color: {snap.color.toUpperCase()}</span>
+                </div>
+
+                <div className="space-y-3">
+                  <h3 className="text-xs font-semibold text-gray-300">Color</h3>
                   <ColorPicker />
+                </div>
+
+                <div className="space-y-3">
+                  <h3 className="text-xs font-semibold text-gray-300">Logo & Texture</h3>
                   <FilePicker />
                   <LogoPresets />
-                  <div>
-                    <h3 className="text-xs font-medium text-gray-400 mb-2">Quick Logos</h3>
-                    <LogoGrid />
-                  </div>
-                  <div>
-                    <h3 className="text-xs font-medium text-gray-400 mb-2">Chat-bot</h3>
-                    <div className="min-h-[200px]">
-                      <ChatBot />
-                    </div>
-                  </div>
-                  <div className="flex gap-2 pt-2">
-                    <button className="btn btn-sm" onClick={() => location.reload()}>Reset</button>
-                    <button className="btn btn-sm" onClick={() => (window as any).dispatchEvent(new Event('toggle-logo'))}>Toggle Logo</button>
-                    <button className="btn btn-sm" onClick={() => (window as any).dispatchEvent(new Event('toggle-full'))}>Toggle Full</button>
-                    <ScreenshotButton />
+                  <LogoGrid />
+                  <div className="flex flex-col gap-2 text-xs text-gray-300">
+                    <label className="flex items-center gap-2">
+                      <input
+                        type="checkbox"
+                        checked={snap.isLogoTexture}
+                        onChange={(e) => (customizationState.isLogoTexture = e.target.checked)}
+                        className="accent-[#00c4b4]"
+                      />
+                      Show chest logo
+                    </label>
+                    <label className="flex items-center gap-2">
+                      <input
+                        type="checkbox"
+                        checked={snap.isFullTexture}
+                        onChange={(e) => (customizationState.isFullTexture = e.target.checked)}
+                        className="accent-[#00c4b4]"
+                      />
+                      Full-shirt texture
+                    </label>
                   </div>
                 </div>
-                <Tabs value={selectedCategory} onValueChange={setSelectedCategory} className="w-full">
-                  {/* Category Tabs */}
-                  <TabsList className="grid grid-cols-2 lg:grid-cols-1 gap-2 bg-transparent p-0 h-auto mb-6">
-                    {categories.map((category) => (
-                      <TabsTrigger
-                        key={category.id}
-                        value={category.id}
-                        className="flex items-center justify-between p-3 bg-white/5 border border-white/10 rounded-lg data-[state=active]:bg-gradient-to-r data-[state=active]:from-[#00c4b4]/20 data-[state=active]:to-[#007bff]/20 data-[state=active]:border-[#00c4b4]/50 text-white hover:bg-white/10 transition-all duration-200"
-                      >
-                        <div className="flex items-center gap-2">
-                          {category.icon}
-                          <span className="text-sm font-medium">{category.name}</span>
-                        </div>
-                        <Badge variant="secondary" className="bg-white/10 text-white text-xs">
-                          {category.count}
-                        </Badge>
-                      </TabsTrigger>
-                    ))}
-                  </TabsList>
 
-                  {/* Category Content */}
-                  {categories.map((category) => (
-                    <TabsContent key={category.id} value={category.id} className="mt-0">
-                      <div className="space-y-6">
-                        {/* Items Grid */}
-                        <div>
-                          <h3 className="text-sm font-semibold text-gray-300 mb-3">Choose Item</h3>
-                          <div className="grid grid-cols-2 gap-3">
-                            {Array.from({ length: 6 }).map((_, i) => (
-                              <div
-                                key={i}
-                                className="aspect-square bg-gradient-to-br from-white/5 to-white/10 rounded-lg border border-white/10 hover:border-[#00c4b4]/50 cursor-pointer transition-all duration-200 hover:scale-105 flex items-center justify-center"
-                              >
-                                <Shirt className="h-6 w-6 md:h-8 md:w-8 text-gray-400" />
-                              </div>
-                            ))}
-                          </div>
-                        </div>
-
-                        {/* Color Selection */}
-                        <div>
-                          <h3 className="text-sm font-semibold text-gray-300 mb-3">Choose Color</h3>
-                          <div className="grid grid-cols-4 gap-2">
-                            {colors.map((color, i) => (
-                              <button
-                                key={i}
-                                onClick={() => setSelectedColor(color)}
-                                className={`w-10 h-10 md:w-12 md:h-12 rounded-full border-2 transition-all duration-200 hover:scale-110 ${
-                                  selectedColor === color ? "border-white shadow-lg" : "border-white/20"
-                                }`}
-                                style={{ backgroundColor: color }}
-                              />
-                            ))}
-                          </div>
-                        </div>
-
-                        {/* Size Selection */}
-                        <SizeSelection selectedSize={selectedSize} onSizeChange={setSelectedSize} />
-
-                        {/* Action Buttons */}
-                        <div className="space-y-3 pt-4 border-t border-white/10">
-                          <Button className="w-full bg-gradient-to-r from-[#00c4b4] to-[#007bff] hover:from-[#00a89a] hover:to-[#0056d6] text-white font-semibold py-3">
-                            Add to Outfit
-                          </Button>
-                          <Button
-                            variant="outline"
-                            className="w-full border-white/20 bg-white/5 text-white hover:bg-white/10"
-                          >
-                            Preview in AR
-                          </Button>
-                        </div>
-                      </div>
-                    </TabsContent>
-                  ))}
-                </Tabs>
+                <div className="pt-2 border-t border-white/10 flex flex-col sm:flex-row gap-3">
+                  <Button
+                    onClick={handleSaveToCart}
+                    className="flex-1 bg-gradient-to-r from-[#00c4b4] to-[#007bff] hover:opacity-90"
+                    disabled={isSaving}
+                  >
+                    <Save className="h-4 w-4 mr-2" />
+                    {isSaving ? "Saving..." : "Save to Cart"}
+                  </Button>
+                  <ScreenshotButton />
+                </div>
               </CardContent>
             </Card>
-          </div>
-        </div>
-
-        {/* Bottom Actions - Mobile */}
-        <div className="fixed bottom-0 left-0 right-0 lg:hidden bg-[#0a0a1a]/90 backdrop-blur-xl border-t border-white/10 p-4">
-          <div className="flex gap-3">
-            <Button variant="outline" className="flex-1 border-white/20 bg-white/10 text-white">
-              <Palette className="h-4 w-4 mr-2" />
-              Customize
-            </Button>
-            <Button className="flex-1 bg-gradient-to-r from-[#00c4b4] to-[#007bff]">
-              <Save className="h-4 w-4 mr-2" />
-              Save Look
-            </Button>
           </div>
         </div>
       </div>

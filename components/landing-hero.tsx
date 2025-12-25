@@ -9,6 +9,8 @@ import { Card, CardContent } from "@/components/ui/card"
 import { Search, Star, ShoppingCart, Sparkles, ArrowRight } from "lucide-react"
 import { motion } from "framer-motion"
 import { gsap } from "gsap"
+import { useCart } from "@/contexts/cart-context"
+import { toast } from "@/hooks/use-toast"
 
 const featuredProducts = [
   {
@@ -56,6 +58,7 @@ const categories = [
 ]
 
 export default function LandingHero() {
+  const { addItem } = useCart()
   const [searchQuery, setSearchQuery] = useState("")
   const [selectedCategory, setSelectedCategory] = useState("All")
 
@@ -85,6 +88,23 @@ export default function LandingHero() {
   const handleSearch = () => {
     // Navigate to product listing with search query
     window.location.href = `/products?search=${encodeURIComponent(searchQuery)}&category=${selectedCategory}`
+  }
+
+  const handleAddToCart = (product: typeof featuredProducts[number]) => {
+    addItem({
+      id: product.id,
+      name: product.name,
+      category: product.category,
+      price: product.price,
+      image: product.image,
+      modelUrl: "",
+      color: "#ffffff",
+      description: `${product.category} • Featured Product`,
+    })
+    toast({
+      title: "Added to cart",
+      description: `${product.name} has been added to your cart`,
+    })
   }
 
   return (
@@ -215,7 +235,8 @@ export default function LandingHero() {
                       <Button
                         size="sm"
                         variant="secondary"
-                        className="bg-white/20 backdrop-blur-sm text-white border-0"
+                        onClick={() => handleAddToCart(product)}
+                        className="bg-[#00C4B4] hover:bg-[#00C4B4]/90 backdrop-blur-sm text-white border-0"
                       >
                         <ShoppingCart className="h-4 w-4" />
                       </Button>
@@ -285,7 +306,7 @@ export default function LandingHero() {
           <div className="bg-gradient-to-r from-[#00C4B4]/20 to-[#007BFF]/20 backdrop-blur-lg rounded-2xl p-8 border border-white/20">
             <h3 className="text-2xl md:text-3xl font-bold mb-4">Ready to Build Your Perfect Outfit?</h3>
             <p className="text-gray-300 mb-6 max-w-2xl mx-auto">
-              Use our advanced 3D outfit builder to visualize how different pieces work together before you buy.
+              Use our outfit builder to visualize how different pieces work together before you buy.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Link href="/products">
@@ -293,13 +314,13 @@ export default function LandingHero() {
                   Browse All Products
                 </Button>
               </Link>
-              <Link href="/3d-playground">
+              <Link href="/outfit-picker">
                 <Button
                   size="lg"
                   variant="outline"
                   className="border-white/20 text-white hover:bg-white/10 px-8 bg-transparent"
                 >
-                  Try 3D Builder
+                  Start Outfit Builder
                 </Button>
               </Link>
             </div>

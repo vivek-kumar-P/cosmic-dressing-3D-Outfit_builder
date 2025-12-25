@@ -56,40 +56,35 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
 
     try {
-      const { data, error } = await supabase.from("profiles").select("*").eq("id", userId).limit(1)
+      const { data, error } = await supabase.from("profiles").select("*").eq("id", userId).single()
 
       if (error) {
+        // If profile doesn't exist, create it asynchronously in the background
+        if (error.code === 'PGRST116') {
+          const currentUser = await supabase.auth.getUser()
+          const newProfile = {
+            id: userId,
+            email: currentUser.data.user?.email || "",
+            username: currentUser.data.user?.email?.split("@")[0] || "",
+            full_name: currentUser.data.user?.user_metadata?.full_name || "",
+            onboarding_completed: false,
+            created_at: new Date().toISOString(),
+            updated_at: new Date().toISOString(),
+          }
+
+          const { data: createdProfile } = await supabase
+            .from("profiles")
+            .insert([newProfile])
+            .select()
+            .single()
+
+          return createdProfile || null
+        }
         console.error("Error fetching profile:", error)
         return null
       }
 
-      if (!data || data.length === 0) {
-        // Create profile if it doesn't exist
-        const newProfile = {
-          id: userId,
-          email: user?.email || "",
-          username: user?.email?.split("@")[0] || "",
-          full_name: user?.user_metadata?.full_name || "",
-          onboarding_completed: false,
-          created_at: new Date().toISOString(),
-          updated_at: new Date().toISOString(),
-        }
-
-        const { data: createdProfile, error: createError } = await supabase
-          .from("profiles")
-          .insert([newProfile])
-          .select()
-          .limit(1)
-
-        if (createError) {
-          console.error("Error creating profile:", createError)
-          return null
-        }
-
-        return createdProfile?.[0] || null
-      }
-
-      return data[0]
+      return data
     } catch (error) {
       console.error("Error in fetchProfile:", error)
       return null
@@ -144,6 +139,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
       if (error) {
         return { success: false, error: error.message }
+      }
+
+      // Fetch profile asynchronously without blocking the response
+      if (data?.user) {
+        fetchProfile(data.user.id).then(setProfile).catch(console.error)
       }
 
       return { success: true, error: null }
@@ -262,10 +262,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       setSession(session)
       setUser(session?.user ?? null)
 
-      if (session?.user) {
-        const profileData = await fetchProfile(session.user.id)
-        setProfile(profileData)
-      } else {
+      // Only fetch profile on initial sign in or user updates, not on every state change
+      if (session?.user && (event === 'SIGNED_IN' || event === 'USER_UPDATED')) {
+        fetchProfile(session.user.id).then(setProfile).catch(console.error)
+      } else if (!session?.user) {
         setProfile(null)
       }
 

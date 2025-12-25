@@ -23,22 +23,22 @@
     "Shopping cart and checkout flow with persistent cart state management.",
     "User profile and settings management within a protected dashboard environment.",
     "Guided onboarding flow and engaging landing page components to facilitate user adoption.",
-    "Global state management using React Context for authentication, cart, and 3D builder states.",
+    "Global state management using React Context for authentication, cart, and outfit builder states.",
     "Responsive UI styled with Tailwind CSS and accessible Radix UI primitives.",
     "API health checks and middleware-protected routes to secure sensitive pages."
   ],
   "user_flow_summary": [
     "Users land on the homepage and proceed to register or login using email-based authentication with verification.",
     "After login, users access the Dashboard to manage their profile, view saved outfits, and customize avatars.",
-    "Users browse the product Gallery, explore product details, and select items to customize in the 3D builder.",
-    "Within the 3D Playground, users create and preview outfits on avatars with real-time customization.",
+    "Users browse the product Gallery, explore product details, and select items to customize with the outfit builder.",
+    "Within the outfit builder, users create and preview outfits on avatars with real-time customization.",
     "Users add selected outfit items to their cart and proceed through the checkout process to complete purchases.",
     "Profile and settings pages allow users to update personal information and manage preferences.",
     "Protected routes restrict dashboard, profile, and checkout areas to authenticated users only."
   ],
   "validation_criteria": [
     "All authentication flows complete successfully with email verification and secure session management.",
-    "3D outfit creation and avatar customization reflect user inputs accurately with no rendering errors.",
+    "Outfit creation and avatar customization reflect user inputs accurately with no rendering errors.",
     "Product browsing and filtering work correctly with loading states and responsive layouts.",
     "Cart updates, quantity changes, and checkout submissions are processed accurately with persistent state.",
     "User profile updates and settings changes persist and reflect immediately in the UI.",
@@ -99,14 +99,11 @@
         ]
       },
       {
-        "name": "3D models and playground",
-        "description": "Three.js model viewers for avatar and products, plus a playground page.",
+        "name": "3D model viewers",
+        "description": "Three.js model viewers for avatar and products.",
         "files": [
           "components/3d/avatar-model.tsx",
-          "components/3d/product-model-viewer.tsx",
-          "components/3d-playground/avatar-playground.tsx",
-          "components/three-d-playground.tsx",
-          "app/3d-playground/page.tsx"
+          "components/3d/product-model-viewer.tsx"
         ]
       },
       {

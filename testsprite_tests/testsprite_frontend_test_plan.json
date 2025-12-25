@@ -354,7 +354,7 @@
   {
     "id": "TC013",
     "title": "Responsive Design across Devices",
-    "description": "Check that all key pages (landing, dashboard, catalog, profile, 3D playground) render and function correctly on desktop, tablet, and mobile screen sizes.",
+    "description": "Check that all key pages (landing, dashboard, catalog, profile, outfit builder) render and function correctly on desktop, tablet, and mobile screen sizes.",
     "category": "ui",
     "priority": "Medium",
     "steps": [

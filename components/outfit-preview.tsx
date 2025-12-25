@@ -478,7 +478,7 @@ export default function OutfitPreview() {
                       className="h-8 w-8 text-zinc-400 hover:text-white hover:bg-zinc-800"
                       asChild
                     >
-                      <Link href="/3d-playground">
+                      <Link href="/outfit-picker">
                         <PenLine className="h-4 w-4" />
                       </Link>
                     </Button>
@@ -508,7 +508,7 @@ export default function OutfitPreview() {
 
               <div className="flex flex-col sm:flex-row gap-3">
                 <Button asChild variant="outline" className="border-zinc-700 flex-1">
-                  <Link href="/3d-playground">
+                  <Link href="/outfit-picker">
                     <ArrowLeft className="mr-2 h-4 w-4" /> Edit Outfit
                   </Link>
                 </Button>

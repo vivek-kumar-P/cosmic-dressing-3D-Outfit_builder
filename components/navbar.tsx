@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react"
 import Link from "next/link"
 import { gsap } from "gsap"
-import { Menu, ShoppingCart, User, Star, Home, Palette, GridIcon, LogOut, Loader, Settings } from "lucide-react"
+import { Menu, ShoppingCart, User, Star, Home, Palette, GridIcon, LogOut, Loader, Settings, Wand2 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { usePathname } from "next/navigation"
 import { useMobile } from "@/hooks/use-mobile"
@@ -68,7 +68,9 @@ export default function Navbar() {
 
   const navLinks = [
     { href: "/", label: "Home", icon: <Home className="h-4 w-4 mr-2" /> },
-    { href: "/customize", label: "Customize", icon: <Palette className="h-4 w-4 mr-2" /> },
+    { href: "/products", label: "Shop", icon: <ShoppingCart className="h-4 w-4 mr-2" /> },
+    { href: "/customize", label: "Customize", icon: <Wand2 className="h-4 w-4 mr-2" /> },
+    { href: "/outfit-picker", label: "Build Outfit", icon: <Palette className="h-4 w-4 mr-2" /> },
     { href: "/gallery", label: "Gallery", icon: <GridIcon className="h-4 w-4 mr-2" /> },
   ]
 
@@ -150,6 +152,10 @@ export default function Navbar() {
                         <User className="h-4 w-4 mr-2" />
                         Dashboard
                       </Link>
+                      <Link href="/orders" className="flex items-center text-lg text-zinc-400 hover:text-white">
+                        <ShoppingCart className="h-4 w-4 mr-2" />
+                        My Orders
+                      </Link>
                       <Link href="/profile" className="flex items-center text-lg text-zinc-400 hover:text-white">
                         <User className="h-4 w-4 mr-2" />
                         Profile
@@ -225,6 +231,9 @@ export default function Navbar() {
                       <div className="px-2 py-1.5 text-xs text-zinc-400">{user?.email}</div>
                       <DropdownMenuItem className="cursor-pointer" asChild>
                         <Link href="/dashboard">Dashboard</Link>
+                      </DropdownMenuItem>
+                      <DropdownMenuItem className="cursor-pointer" asChild>
+                        <Link href="/orders">My Orders</Link>
                       </DropdownMenuItem>
                       <DropdownMenuItem className="cursor-pointer" asChild>
                         <Link href="/profile">Profile</Link>

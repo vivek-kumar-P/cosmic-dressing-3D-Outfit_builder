@@ -51,14 +51,11 @@
       ]
     },
     {
-      "name": "3D models and playground",
-      "description": "Three.js model viewers for avatar and products, plus a playground page.",
+      "name": "3D model viewers",
+      "description": "Three.js model viewers for avatar and products.",
       "files": [
         "components/3d/avatar-model.tsx",
-        "components/3d/product-model-viewer.tsx",
-        "components/3d-playground/avatar-playground.tsx",
-        "components/three-d-playground.tsx",
-        "app/3d-playground/page.tsx"
+        "components/3d/product-model-viewer.tsx"
       ]
     },
     {

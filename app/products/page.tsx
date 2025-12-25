@@ -9,9 +9,13 @@ import { Badge } from "@/components/ui/badge"
 import { Slider } from "@/components/ui/slider"
 import { Checkbox } from "@/components/ui/checkbox"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { Search, Grid, List, Star, ShoppingCart, Heart, SlidersHorizontal } from "lucide-react"
+import { Search, Grid, List, Star, ShoppingCart, Heart, SlidersHorizontal, Eye } from "lucide-react"
 import Link from "next/link"
 import { motion } from "framer-motion"
+import { useCart } from "@/contexts/cart-context"
+import { useLikes } from "@/contexts/likes-context"
+import ProductDetailModal, { type ProductDetailItem } from "@/components/product-detail-modal"
+import { useRouter } from "next/navigation"
 
 // Mock product data
 const allProducts = Array.from({ length: 48 }, (_, i) => ({
@@ -53,7 +57,11 @@ function ProductListingContent() {
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid")
   const [showFilters, setShowFilters] = useState(false)
   const [currentPage, setCurrentPage] = useState(1)
-  const [likedItems, setLikedItems] = useState<Set<number>>(new Set())
+  const { addItem } = useCart()
+  const { addLike, removeLike, isLiked } = useLikes()
+  const router = useRouter()
+  const [detailItem, setDetailItem] = useState<ProductDetailItem | null>(null)
+  const [detailOpen, setDetailOpen] = useState(false)
   const productsPerPage = 12
 
   useEffect(() => {
@@ -105,16 +113,48 @@ function ProductListingContent() {
     setCurrentPage(1)
   }, [searchQuery, selectedCategory, selectedBrand, priceRange, sortBy])
 
-  const toggleLike = (productId: number) => {
-    setLikedItems((prev) => {
-      const newSet = new Set(prev)
-      if (newSet.has(productId)) {
-        newSet.delete(productId)
-      } else {
-        newSet.add(productId)
-      }
-      return newSet
+  const toggleLike = (product: typeof allProducts[number]) => {
+    if (isLiked(product.id)) {
+      removeLike(product.id)
+    } else {
+      addLike({
+        id: product.id,
+        name: product.name,
+        category: product.category,
+        price: product.price,
+        image: product.image,
+        color: "#ffffff",
+        description: `${product.brand} • ${product.category}`,
+      })
+    }
+  }
+
+  const handleAddToCart = (product: typeof allProducts[number]) => {
+    addItem({
+      id: product.id,
+      name: product.name,
+      category: product.category,
+      price: product.price,
+      image: product.image,
+      modelUrl: "",
+      color: "#ffffff",
+      description: `${product.brand} • ${product.category}`,
     })
+  }
+
+  const openDetails = (product: typeof allProducts[number]) => {
+    const item: ProductDetailItem = {
+      id: product.id,
+      name: product.name,
+      category: product.category,
+      price: product.price,
+      image: product.image,
+      modelUrl: "",
+      color: "#ffffff",
+      description: `${product.brand} • ${product.category}`,
+    }
+    setDetailItem(item)
+    setDetailOpen(true)
   }
 
   const paginatedProducts = filteredProducts.slice((currentPage - 1) * productsPerPage, currentPage * productsPerPage)
@@ -122,7 +162,7 @@ function ProductListingContent() {
   const totalPages = Math.ceil(filteredProducts.length / productsPerPage)
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-[#0A0A1A] via-[#1A1A3A] to-[#2A1A4A] text-white pt-20">
+    <div className="min-h-screen bg-gradient-to-br from-[#0A0A1A] via-[#1A1A3A] to-[#2A1A4A] text-white pt-24">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Header */}
         <div className="mb-8">
@@ -322,20 +362,29 @@ function ProductListingContent() {
                           <Button
                             size="sm"
                             variant="secondary"
-                            onClick={() => toggleLike(product.id)}
+                            onClick={() => toggleLike(product)}
                             className={`w-8 h-8 p-0 backdrop-blur-sm border-0 ${
-                              likedItems.has(product.id) ? "bg-red-500 text-white" : "bg-white/20 text-white"
+                              isLiked(product.id) ? "bg-red-500 text-white" : "bg-white/20 text-white"
                             }`}
                           >
-                            <Heart className={`h-4 w-4 ${likedItems.has(product.id) ? "fill-current" : ""}`} />
+                            <Heart className={`h-4 w-4 ${isLiked(product.id) ? "fill-current" : ""}`} />
                           </Button>
                           <Button
                             size="sm"
                             variant="secondary"
+                            onClick={() => handleAddToCart(product)}
                             className="w-8 h-8 p-0 bg-[#00C4B4] text-white border-0"
                             disabled={!product.inStock}
                           >
                             <ShoppingCart className="h-4 w-4" />
+                          </Button>
+                          <Button
+                            size="sm"
+                            variant="secondary"
+                            onClick={() => openDetails(product)}
+                            className="w-8 h-8 p-0 bg-white/20 text-white border-0"
+                          >
+                            <Eye className="h-4 w-4" />
                           </Button>
                         </div>
 
@@ -406,11 +455,13 @@ function ProductListingContent() {
                             )}
                           </div>
                           {viewMode === "list" && (
-                            <Link href={`/products/${product.id}`}>
-                              <Button size="sm" className="bg-gradient-to-r from-[#00C4B4] to-[#007BFF] text-white">
-                                View Details
-                              </Button>
-                            </Link>
+                            <Button
+                              size="sm"
+                              onClick={() => openDetails(product)}
+                              className="bg-gradient-to-r from-[#00C4B4] to-[#007BFF] text-white"
+                            >
+                              View Details
+                            </Button>
                           )}
                         </div>
                       </div>
@@ -463,6 +514,16 @@ function ProductListingContent() {
           </div>
         </div>
       </div>
+      {/* Product Detail Modal */}
+      <ProductDetailModal
+        item={detailItem}
+        open={detailOpen}
+        onOpenChange={setDetailOpen}
+        onCustomize={() => {
+          setDetailOpen(false)
+          router.push("/customize")
+        }}
+      />
     </div>
   )
 }
@@ -482,4 +543,10 @@ export default function ProductListingPage() {
       <ProductListingContent />
     </Suspense>
   )
+}
+
+// Modal host at page root to avoid z-index issues
+export function ProductDetailHost() {
+  const [open, setOpen] = useState(false)
+  return null
 }

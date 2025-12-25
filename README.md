@@ -94,7 +94,6 @@ Visit these URLs to verify everything works:
 
 - **🏠 Homepage**: `http://localhost:3000`
 - **🔐 Login**: `http://localhost:3000/auth/login`
-- **🎮 3D Playground**: `http://localhost:3000/3d-playground`
 - **📊 Health Check**: `http://localhost:3000/api/health`
 - **🔧 Test Connection**: `http://localhost:3000/test-connection`
 
@@ -116,11 +115,6 @@ npm install
 1. Make sure you ran ALL SQL scripts in order
 2. Check Supabase Dashboard → Database → Tables exist
 3. Verify RLS policies are enabled
-
-### ❌ 3D scene not loading
-1. Check browser console for errors (F12 → Console)
-2. Try a different browser (Chrome recommended)
-3. Ensure WebGL is supported: visit `https://get.webgl.org/`
 
 ### ❌ Build/deployment errors
 \`\`\`bash
@@ -160,7 +154,6 @@ npm run build
 ├── components/            # Reusable UI components
 │   ├── ui/               # shadcn/ui components
 │   ├── auth/             # Authentication components
-│   └── 3d/               # 3D visualization components
 ├── lib/                   # Utility functions
 ├── scripts/               # Database setup scripts
 └── public/               # Static assets

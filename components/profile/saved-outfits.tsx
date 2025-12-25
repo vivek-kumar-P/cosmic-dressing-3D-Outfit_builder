@@ -119,7 +119,7 @@ export default function SavedOutfits() {
               <div className="text-center py-8">
                 <p className="text-zinc-400">You haven't saved any outfits yet.</p>
                 <Button asChild className="mt-4 bg-gradient-to-r from-[#007BFF] to-[#00C4B4]">
-                  <Link href="/3d-playground">Create an Outfit</Link>
+                  <Link href="/outfit-picker">Create an Outfit</Link>
                 </Button>
               </div>
             ) : (
@@ -147,9 +147,9 @@ export default function SavedOutfits() {
                     </div>
                     <div className="flex items-center space-x-2 w-full md:w-auto">
                       <Button variant="outline" size="sm" className="border-zinc-700 w-full md:w-auto" asChild>
-                        <Link href={`/preview?outfit=${outfit.id}`}>
+                        <Link href="/outfit-picker">
                           <Eye className="h-4 w-4 mr-2" />
-                          View
+                          Open in Builder
                         </Link>
                       </Button>
                       <Button
@@ -216,9 +216,9 @@ export default function SavedOutfits() {
                       </div>
                       <div className="flex items-center space-x-2 w-full md:w-auto">
                         <Button variant="outline" size="sm" className="border-zinc-700 w-full md:w-auto" asChild>
-                          <Link href={`/preview?outfit=${outfit.id}`}>
+                          <Link href="/outfit-picker">
                             <Eye className="h-4 w-4 mr-2" />
-                            View
+                            Open in Builder
                           </Link>
                         </Button>
                         <Button
@@ -289,9 +289,9 @@ export default function SavedOutfits() {
                       </div>
                       <div className="flex items-center space-x-2 w-full md:w-auto">
                         <Button variant="outline" size="sm" className="border-zinc-700 w-full md:w-auto" asChild>
-                          <Link href={`/preview?outfit=${outfit.id}`}>
+                          <Link href="/outfit-picker">
                             <Eye className="h-4 w-4 mr-2" />
-                            View
+                            Open in Builder
                           </Link>
                         </Button>
                         <Button

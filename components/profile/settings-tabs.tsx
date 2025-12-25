@@ -2,7 +2,7 @@
 
 import type React from "react"
 
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
@@ -15,7 +15,7 @@ import { Loader, Camera, Save, User, MapPin, Shield, Bell } from "lucide-react"
 import { toast } from "sonner"
 
 export default function SettingsTabs() {
-  const { user, profile, updateProfile } = useAuth()
+  const { user, profile, updateProfile, refreshProfile } = useAuth()
   const [isLoading, setIsLoading] = useState(false)
   const [profileData, setProfileData] = useState({
     full_name: profile?.full_name || "",
@@ -30,6 +30,22 @@ export default function SettingsTabs() {
     country: profile?.country || "",
   })
 
+  useEffect(() => {
+    if (!profile) return
+    setProfileData({
+      full_name: profile.full_name || "",
+      username: profile.username || "",
+      bio: profile.bio || "",
+      phone: profile.phone || "",
+      website: profile.website || "",
+      street_address: profile.street_address || "",
+      city: profile.city || "",
+      state: profile.state || "",
+      postal_code: profile.postal_code || "",
+      country: profile.country || "",
+    })
+  }, [profile])
+
   const handleInputChange = (field: string, value: string) => {
     setProfileData((prev) => ({ ...prev, [field]: value }))
   }
@@ -39,6 +55,7 @@ export default function SettingsTabs() {
     try {
       const result = await updateProfile(profileData)
       if (result.success) {
+        await refreshProfile()
         toast.success("Profile updated successfully!")
       } else {
         toast.error(result.error || "Failed to update profile")
@@ -74,6 +91,7 @@ export default function SettingsTabs() {
         const base64 = e.target?.result as string
         const result = await updateProfile({ avatar_url: base64 })
         if (result.success) {
+          await refreshProfile()
           toast.success("Profile picture updated!")
         } else {
           toast.error("Failed to update profile picture")

@@ -8,28 +8,28 @@ import { Facebook, Twitter, Instagram, Youtube, Mail, Phone, MapPin, Palette, Ar
 
 const footerLinks = {
   product: [
-    { name: "3D Designer", href: "/3d-playground" },
-    { name: "Outfit Gallery", href: "/gallery" },
-    { name: "Style Assistant", href: "/assistant" },
-    { name: "Virtual Try-On", href: "/try-on" },
+    { name: "Outfit Builder", href: "/outfit-picker" },
+    { name: "Gallery", href: "/gallery" },
+    { name: "Customize", href: "/customize" },
+    { name: "Products", href: "/products" },
   ],
   company: [
-    { name: "About Us", href: "/about" },
-    { name: "Careers", href: "/careers" },
-    { name: "Press", href: "/press" },
-    { name: "Blog", href: "/blog" },
+    { name: "Dashboard", href: "/dashboard" },
+    { name: "Profile", href: "/profile" },
+    { name: "Orders", href: "/orders" },
+    { name: "Cart", href: "/cart" },
   ],
   support: [
-    { name: "Help Center", href: "/help" },
-    { name: "Contact Us", href: "/contact" },
-    { name: "Size Guide", href: "/size-guide" },
-    { name: "Returns", href: "/returns" },
+    { name: "Settings", href: "/profile/settings" },
+    { name: "Checkout", href: "/checkout" },
+    { name: "Gallery", href: "/gallery" },
+    { name: "Products", href: "/products" },
   ],
   legal: [
-    { name: "Privacy Policy", href: "/privacy" },
-    { name: "Terms of Service", href: "/terms" },
-    { name: "Cookie Policy", href: "/cookies" },
-    { name: "GDPR", href: "/gdpr" },
+    { name: "Sign In", href: "/auth/login" },
+    { name: "Sign Up", href: "/auth/register" },
+    { name: "Dashboard", href: "/dashboard" },
+    { name: "Profile", href: "/profile" },
   ],
 }
 
@@ -159,7 +159,7 @@ export default function Footer() {
       {/* Bottom Footer */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
         <div className="flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0">
-          <div className="text-gray-400 text-sm">© 2024 3D Outfit Builder. All rights reserved.</div>
+          <div className="text-gray-400 text-sm">© 2025 Cosmic Outfits. All rights reserved.</div>
 
           {/* Social Links */}
           <div className="flex space-x-4">

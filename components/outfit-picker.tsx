@@ -26,7 +26,9 @@ import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/comp
 import ProductModelViewer from "@/components/3d/product-model-viewer"
 import { Dialog, DialogContent, DialogTitle, DialogHeader, DialogDescription } from "@/components/ui/dialog"
 import OutfitCombinationView from "@/components/outfit-combination-view"
+import ProductDetailModal from "@/components/product-detail-modal"
 import { useCart } from "@/contexts/cart-context"
+import { useLikes } from "@/contexts/likes-context"
 import { toast } from "@/hooks/use-toast"
 
 // Mock outfit items with custom 3D models
@@ -159,11 +161,12 @@ export default function OutfitPicker() {
   const [searchTerm, setSearchTerm] = useState<string>("")
   const [sortBy, setSortBy] = useState<string>("newest")
   const [loading, setLoading] = useState(true)
-  const [previewItem, setPreviewItem] = useState<(typeof outfitItems)[0] | null>(null)
+  const [detailItem, setDetailItem] = useState<(typeof outfitItems)[0] | null>(null)
   const [showCombination, setShowCombination] = useState(false)
   const [hoveredItemId, setHoveredItemId] = useState<number | null>(null)
 
   const { addItem, items: cartItems } = useCart()
+  const { isLiked } = useLikes()
 
   // Refs for model rotation control
   const modelRotationRefs = useRef<{ [key: number]: { rotationSpeed: number } }>({})
@@ -390,8 +393,8 @@ export default function OutfitPicker() {
               disabled={selectedItems.length === 0}
               className="bg-gradient-to-r from-[#007BFF] to-[#00C4B4] hover:opacity-90 border-0"
             >
-              <Link href="/3d-playground">
-                Continue to 3D View <ArrowRight className="ml-2 h-4 w-4" />
+              <Link href="/cart">
+                Go to Cart <ArrowRight className="ml-2 h-4 w-4" />
               </Link>
             </Button>
           </div>
@@ -486,49 +489,64 @@ export default function OutfitPicker() {
 
                         {/* Action buttons overlay */}
                         <div className="absolute top-0 left-0 right-0 bottom-0 bg-black/0 hover:bg-black/40 transition-all opacity-0 hover:opacity-100 flex items-center justify-center gap-2">
-                          <Button
-                            variant="outline"
-                            size="icon"
-                            className="h-10 w-10 rounded-full bg-white text-black border-0 shadow-lg hover:bg-[#00C4B4] hover:text-white transition-all"
-                            onClick={(e) => {
-                              e.stopPropagation()
-                              openQuickPreview(e, item)
-                            }}
-                          >
-                            <Maximize2 className="h-5 w-5" />
-                          </Button>
+                          <Tooltip>
+                            <TooltipTrigger asChild>
+                              <Button
+                                variant="outline"
+                                size="icon"
+                                className="h-10 w-10 rounded-full bg-white text-black border-0 shadow-lg hover:bg-[#00C4B4] hover:text-white transition-all"
+                                onClick={(e) => {
+                                  e.stopPropagation()
+                                  setDetailItem(item)
+                                }}
+                              >
+                                <Maximize2 className="h-5 w-5" />
+                              </Button>
+                            </TooltipTrigger>
+                            <TooltipContent>View Details</TooltipContent>
+                          </Tooltip>
 
-                          <Button
-                            variant="outline"
-                            size="icon"
-                            className="h-10 w-10 rounded-full bg-white text-black border-0 shadow-lg hover:bg-[#00C4B4] hover:text-white transition-all"
-                            onClick={(e) => {
-                              e.stopPropagation()
-                              addItem(item)
-                              toast({
-                                title: "Added to cart",
-                                description: `${item.name} added to your cart`,
-                              })
-                            }}
-                          >
-                            <ShoppingCart className="h-5 w-5" />
-                          </Button>
+                          <Tooltip>
+                            <TooltipTrigger asChild>
+                              <Button
+                                variant="outline"
+                                size="icon"
+                                className="h-10 w-10 rounded-full bg-white text-black border-0 shadow-lg hover:bg-[#00C4B4] hover:text-white transition-all"
+                                onClick={(e) => {
+                                  e.stopPropagation()
+                                  addItem(item)
+                                  toast({
+                                    title: "Added to cart",
+                                    description: `${item.name} added to your cart`,
+                                  })
+                                }}
+                              >
+                                <ShoppingCart className="h-5 w-5" />
+                              </Button>
+                            </TooltipTrigger>
+                            <TooltipContent>Add to Cart</TooltipContent>
+                          </Tooltip>
 
-                          <Button
-                            variant="outline"
-                            size="icon"
-                            className="h-10 w-10 rounded-full bg-white text-black border-0 shadow-lg hover:bg-[#00C4B4] hover:text-white transition-all"
-                            onClick={(e) => {
-                              e.stopPropagation()
-                              // Add favorite functionality here
-                              toast({
-                                title: "Added to favorites",
-                                description: `${item.name} added to your favorites`,
-                              })
-                            }}
-                          >
-                            <Heart className="h-5 w-5" />
-                          </Button>
+                          <Tooltip>
+                            <TooltipTrigger asChild>
+                              <Button
+                                variant="outline"
+                                size="icon"
+                                className={`h-10 w-10 rounded-full border-0 shadow-lg transition-all ${
+                                  isLiked(item.id)
+                                    ? "bg-red-500 text-white hover:bg-red-600"
+                                    : "bg-white text-black hover:bg-[#00C4B4] hover:text-white"
+                                }`}
+                                onClick={(e) => {
+                                  e.stopPropagation()
+                                  setDetailItem(item)
+                                }}
+                              >
+                                <Heart className={`h-5 w-5 ${isLiked(item.id) ? "fill-current" : ""}`} />
+                              </Button>
+                            </TooltipTrigger>
+                            <TooltipContent>Like & View More</TooltipContent>
+                          </Tooltip>
                         </div>
                       </div>
                       <div className="p-4">
@@ -596,80 +614,13 @@ export default function OutfitPicker() {
         </div>
       )}
 
-      {/* Quick Preview Dialog */}
-      <Dialog open={previewItem !== null} onOpenChange={(open) => !open && setPreviewItem(null)}>
-        <DialogContent className="bg-[#1A1A1A] border-zinc-700 text-white max-w-3xl">
-          {previewItem && (
-            <>
-              <DialogHeader>
-                <DialogTitle className="text-xl">{previewItem.name}</DialogTitle>
-                <DialogDescription className="text-zinc-400">{previewItem.description}</DialogDescription>
-              </DialogHeader>
-
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-4">
-                <div className="h-[300px] bg-[#0A0A1A] rounded-lg overflow-hidden">
-                  <ProductModelViewer
-                    modelUrl={previewItem.modelUrl}
-                    interactive={true}
-                    autoRotate={true}
-                    height="300px"
-                    modelColor={previewItem.color}
-                  />
-                </div>
-
-                <div className="space-y-4">
-                  <div>
-                    <h4 className="text-sm font-medium text-zinc-400">Category</h4>
-                    <p className="capitalize">{previewItem.category}</p>
-                  </div>
-
-                  <div>
-                    <h4 className="text-sm font-medium text-zinc-400">Price</h4>
-                    <p className="text-[#00C4B4] text-xl font-bold">${previewItem.price}</p>
-                  </div>
-
-                  <div>
-                    <h4 className="text-sm font-medium text-zinc-400">Color</h4>
-                    <div className="flex items-center mt-1">
-                      <div className="w-6 h-6 rounded-full mr-2" style={{ backgroundColor: previewItem.color }}></div>
-                      <span>Custom Color</span>
-                    </div>
-                  </div>
-
-                  <div className="flex gap-2 mt-6">
-                    <Button
-                      className="flex-1 bg-[#00C4B4] hover:bg-[#00C4B4]/90 text-black"
-                      onClick={() => {
-                        addItem(previewItem)
-                        toast({
-                          title: "Added to cart",
-                          description: `${previewItem.name} added to your cart`,
-                        })
-                        setPreviewItem(null)
-                      }}
-                    >
-                      <ShoppingCart className="mr-2 h-4 w-4" />
-                      Add to Cart
-                    </Button>
-
-                    <Button
-                      className="flex-1 bg-gradient-to-r from-[#007BFF] to-[#00C4B4] hover:opacity-90 border-0"
-                      onClick={() => {
-                        if (!selectedItems.includes(previewItem.id)) {
-                          toggleItem(previewItem.id)
-                        }
-                        setPreviewItem(null)
-                      }}
-                    >
-                      {selectedItems.includes(previewItem.id) ? "Already in Your Selection" : "Add to Selection"}
-                    </Button>
-                  </div>
-                </div>
-              </div>
-            </>
-          )}
-        </DialogContent>
-      </Dialog>
+      {/* Product Detail Modal */}
+      <ProductDetailModal
+        item={detailItem}
+        open={detailItem !== null}
+        onOpenChange={(open) => !open && setDetailItem(null)}
+        onCustomize={() => window.location.href = "/customize"}
+      />
 
       {/* Outfit Combination View */}
       <Dialog open={showCombination} onOpenChange={setShowCombination}>
@@ -699,8 +650,8 @@ export default function OutfitPicker() {
             </Button>
 
             <Button asChild className="bg-gradient-to-r from-[#007BFF] to-[#00C4B4] hover:opacity-90 border-0">
-              <Link href="/3d-playground">
-                Go to 3D Playground <ArrowRight className="ml-2 h-4 w-4" />
+              <Link href="/cart">
+                Go to Cart <ArrowRight className="ml-2 h-4 w-4" />
               </Link>
             </Button>
           </div>

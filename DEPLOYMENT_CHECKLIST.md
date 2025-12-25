@@ -66,7 +66,7 @@ Ensure the following storage buckets exist:
 - [ ] Landing page loads without errors
 - [ ] Feature cards animate smoothly into view
 - [ ] Navigation works (authenticated vs non-authenticated states)
-- [ ] 3D Playground page loads
+- [ ] Outfit Builder flow works end-to-end
 - [ ] Outfit Picker functionality
 - [ ] Gallery page with filters
 - [ ] Product pages and cart functionality

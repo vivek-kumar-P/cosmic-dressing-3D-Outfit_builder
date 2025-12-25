@@ -8,18 +8,17 @@ import { Input } from "@/components/ui/input"
 import { Separator } from "@/components/ui/separator"
 import { Trash2, Plus, Minus, ShoppingBag, ArrowLeft, Tag } from "lucide-react"
 import { useCart } from "@/contexts/cart-context"
+import { calculateTotals } from "@/lib/pricing"
 import { motion, AnimatePresence } from "framer-motion"
 import { toast } from "@/hooks/use-toast"
 
 export default function CartPage() {
-  const { items, updateQuantity, removeFromCart, totalPrice, totalItems } = useCart()
+  const { items, updateQuantity, removeItem, totalPrice, totalItems } = useCart()
   const [promoCode, setPromoCode] = useState("")
   const [discount, setDiscount] = useState(0)
   const [isApplyingPromo, setIsApplyingPromo] = useState(false)
 
-  const shipping = totalPrice > 50 ? 0 : 9.99
-  const tax = totalPrice * 0.08
-  const finalTotal = totalPrice - discount + shipping + tax
+  const { shipping, tax, total } = calculateTotals({ items, discount })
 
   const handleApplyPromo = async () => {
     setIsApplyingPromo(true)
@@ -91,7 +90,7 @@ export default function CartPage() {
             <AnimatePresence>
               {items.map((item) => (
                 <motion.div
-                  key={`${item.id}-${item.color}-${item.size}`}
+                  key={`${item.id}-${item.color}`}
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, x: -100 }}
@@ -116,13 +115,12 @@ export default function CartPage() {
                               <h3 className="font-semibold text-lg text-white">{item.name}</h3>
                               <div className="flex items-center gap-4 text-sm text-gray-400">
                                 <span>Color: {item.color}</span>
-                                <span>Size: {item.size}</span>
                               </div>
                             </div>
                             <Button
                               variant="ghost"
                               size="sm"
-                              onClick={() => removeFromCart(item.id, item.color, item.size)}
+                              onClick={() => removeItem(item.id)}
                               className="text-red-400 hover:text-red-300 hover:bg-red-500/20"
                             >
                               <Trash2 className="h-4 w-4" />
@@ -135,9 +133,7 @@ export default function CartPage() {
                               <Button
                                 variant="ghost"
                                 size="sm"
-                                onClick={() =>
-                                  updateQuantity(item.id, item.color, item.size, Math.max(1, item.quantity - 1))
-                                }
+                                onClick={() => updateQuantity(item.id, Math.max(1, item.quantity - 1))}
                                 className="text-white hover:bg-white/10"
                               >
                                 <Minus className="h-4 w-4" />
@@ -146,7 +142,7 @@ export default function CartPage() {
                               <Button
                                 variant="ghost"
                                 size="sm"
-                                onClick={() => updateQuantity(item.id, item.color, item.size, item.quantity + 1)}
+                                onClick={() => updateQuantity(item.id, item.quantity + 1)}
                                 className="text-white hover:bg-white/10"
                               >
                                 <Plus className="h-4 w-4" />
@@ -160,6 +156,14 @@ export default function CartPage() {
                               </div>
                               <div className="text-sm text-gray-400">${item.price.toFixed(2)} each</div>
                             </div>
+                          </div>
+
+                          <div className="flex flex-wrap gap-3 pt-3 border-t border-white/10 mt-3">
+                            <Link href="/customize">
+                              <Button variant="outline" size="sm" className="border-white/20 text-white hover:bg-white/10">
+                                Review your product
+                              </Button>
+                            </Link>
                           </div>
                         </div>
                       </div>
@@ -230,7 +234,7 @@ export default function CartPage() {
 
                   <div className="flex justify-between text-xl font-bold">
                     <span>Total</span>
-                    <span className="text-[#00C4B4]">${finalTotal.toFixed(2)}</span>
+                    <span className="text-[#00C4B4]">${total.toFixed(2)}</span>
                   </div>
                 </div>
 

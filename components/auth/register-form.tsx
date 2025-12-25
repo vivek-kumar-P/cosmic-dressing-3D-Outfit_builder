@@ -32,21 +32,20 @@ export default function RegisterForm() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    setIsLoading(true)
     setError(null)
 
-    // Validation
+    // Client-side validation (fast)
     if (formData.password !== formData.confirmPassword) {
       setError("Passwords do not match")
-      setIsLoading(false)
       return
     }
 
     if (formData.password.length < 6) {
       setError("Password must be at least 6 characters long")
-      setIsLoading(false)
       return
     }
+
+    setIsLoading(true)
 
     try {
       const result = await signUp(formData.email, formData.password, {

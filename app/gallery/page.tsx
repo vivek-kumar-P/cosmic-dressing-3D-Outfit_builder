@@ -7,6 +7,10 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Card, CardContent } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
+import { useCart } from "@/contexts/cart-context"
+import { useLikes } from "@/contexts/likes-context"
+import ProductDetailModal, { type ProductDetailItem } from "@/components/product-detail-modal"
+import { useRouter } from "next/navigation"
 
 const categories = ["All", "Tops", "Bottoms", "Dresses", "Accessories", "Shoes"]
 const sortOptions = ["Popular", "Newest", "Price: Low to High", "Price: High to Low"]
@@ -27,7 +31,11 @@ export default function GalleryPage() {
   const [selectedCategory, setSelectedCategory] = useState("All")
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid")
   const [showFilters, setShowFilters] = useState(false)
-  const [likedItems, setLikedItems] = useState<Set<number>>(new Set())
+  const { addItem } = useCart()
+  const { addLike, removeLike, isLiked } = useLikes()
+  const router = useRouter()
+  const [detailItem, setDetailItem] = useState<ProductDetailItem | null>(null)
+  const [detailOpen, setDetailOpen] = useState(false)
 
   useEffect(() => {
     // Page entrance animations
@@ -40,16 +48,48 @@ export default function GalleryPage() {
     )
   }, [])
 
-  const toggleLike = (id: number) => {
-    setLikedItems((prev) => {
-      const newSet = new Set(prev)
-      if (newSet.has(id)) {
-        newSet.delete(id)
-      } else {
-        newSet.add(id)
-      }
-      return newSet
+  const toggleLike = (outfit: typeof outfits[number]) => {
+    if (isLiked(outfit.id)) {
+      removeLike(outfit.id)
+    } else {
+      addLike({
+        id: outfit.id,
+        name: outfit.name,
+        category: outfit.category,
+        price: outfit.price,
+        image: outfit.image,
+        color: "#ffffff",
+        description: `Outfit • ${outfit.category}`,
+      })
+    }
+  }
+
+  const handleAddToCart = (outfit: typeof outfits[number]) => {
+    addItem({
+      id: outfit.id,
+      name: outfit.name,
+      category: outfit.category,
+      price: outfit.price,
+      image: outfit.image,
+      modelUrl: "",
+      color: "#ffffff",
+      description: `Outfit • ${outfit.category}`,
     })
+  }
+
+  const openDetails = (outfit: typeof outfits[number]) => {
+    const item: ProductDetailItem = {
+      id: outfit.id,
+      name: outfit.name,
+      category: outfit.category,
+      price: outfit.price,
+      image: outfit.image,
+      modelUrl: "",
+      color: "#ffffff",
+      description: `Outfit • ${outfit.category}`,
+    }
+    setDetailItem(item)
+    setDetailOpen(true)
   }
 
   const filteredOutfits = outfits.filter((outfit) => {
@@ -59,7 +99,7 @@ export default function GalleryPage() {
   })
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-[#0a0a1a] via-[#1a1a3a] to-[#2a1a4a] text-white pt-20 pb-8">
+    <div className="min-h-screen bg-gradient-to-br from-[#0a0a1a] via-[#1a1a3a] to-[#2a1a4a] text-white pt-24 pb-8">
       <div className="max-w-7xl mx-auto px-4 md:px-8">
         {/* Header */}
         <div className="gallery-header mb-6 md:mb-8">
@@ -179,20 +219,29 @@ export default function GalleryPage() {
 
                   {/* Overlay Actions */}
                   <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center gap-2">
-                    <Button size="sm" variant="secondary" className="bg-white/20 backdrop-blur-sm text-white border-0">
+                    <Button
+                      size="sm"
+                      variant="secondary"
+                      onClick={() => openDetails(outfit)}
+                      className="bg-white/20 backdrop-blur-sm text-white border-0"
+                    >
                       <Eye className="h-4 w-4" />
                     </Button>
                     <Button
                       size="sm"
                       variant="secondary"
-                      onClick={() => toggleLike(outfit.id)}
+                      onClick={() => toggleLike(outfit)}
                       className={`backdrop-blur-sm border-0 ${
-                        likedItems.has(outfit.id) ? "bg-red-500 text-white" : "bg-white/20 text-white"
+                        isLiked(outfit.id) ? "bg-red-500 text-white" : "bg-white/20 text-white"
                       }`}
                     >
-                      <Heart className={`h-4 w-4 ${likedItems.has(outfit.id) ? "fill-current" : ""}`} />
+                      <Heart className={`h-4 w-4 ${isLiked(outfit.id) ? "fill-current" : ""}`} />
                     </Button>
-                    <Button size="sm" className="bg-[#00c4b4] text-white border-0">
+                    <Button
+                      size="sm"
+                      className="bg-[#00c4b4] text-white border-0"
+                      onClick={() => handleAddToCart(outfit)}
+                    >
                       <ShoppingCart className="h-4 w-4" />
                     </Button>
                   </div>
@@ -232,7 +281,11 @@ export default function GalleryPage() {
                     </div>
 
                     {viewMode === "list" && (
-                      <Button size="sm" className="bg-gradient-to-r from-[#00c4b4] to-[#007bff] text-white">
+                      <Button
+                        size="sm"
+                        className="bg-gradient-to-r from-[#00c4b4] to-[#007bff] text-white"
+                        onClick={() => router.push("/customize")}
+                      >
                         Customize
                       </Button>
                     )}
@@ -250,6 +303,16 @@ export default function GalleryPage() {
           </Button>
         </div>
       </div>
+      {/* Product Detail Modal */}
+      <ProductDetailModal
+        item={detailItem}
+        open={detailOpen}
+        onOpenChange={setDetailOpen}
+        onCustomize={() => {
+          setDetailOpen(false)
+          router.push("/customize")
+        }}
+      />
     </div>
   )
 }

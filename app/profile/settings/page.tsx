@@ -10,7 +10,7 @@ export const metadata: Metadata = {
 export default function ProfileSettingsPage() {
   return (
     <ProtectedRoute>
-      <div className="min-h-screen bg-gradient-to-b from-[#0A0A1A] to-[#1A1A3A] text-white">
+      <div className="min-h-screen bg-gradient-to-b from-[#0A0A1A] to-[#1A1A3A] text-white pt-24">
         <div className="container mx-auto px-4 py-8">
           <div className="max-w-4xl mx-auto">
             <div className="mb-8">

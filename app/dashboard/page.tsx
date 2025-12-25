@@ -10,7 +10,6 @@ import { Progress } from "@/components/ui/progress"
 import {
   User,
   Settings,
-  ShoppingBag,
   Palette,
   Heart,
   Eye,
@@ -19,7 +18,6 @@ import {
   Activity,
   Award,
   MapPin,
-  Mail,
 } from "lucide-react"
 import Link from "next/link"
 import { useState, useEffect } from "react"
@@ -100,7 +98,7 @@ export default function DashboardPage() {
 
   return (
     <ProtectedRoute>
-      <div className="min-h-screen bg-gradient-to-br from-[#0A0A1A] via-[#1A1A3A] to-[#2A1A4A] p-4">
+      <div className="min-h-screen bg-gradient-to-br from-[#0A0A1A] via-[#1A1A3A] to-[#2A1A4A] p-4 pt-24">
         <div className="max-w-7xl mx-auto space-y-6">
           {/* Header Section */}
           <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-6">
@@ -142,6 +140,16 @@ export default function DashboardPage() {
                 variant="outline"
                 className="border-[#00C4B4]/50 text-[#00C4B4] hover:bg-[#00C4B4]/10 bg-transparent"
               >
+                <Link href="/profile">
+                  <User className="h-4 w-4 mr-2" />
+                  Profile
+                </Link>
+              </Button>
+              <Button
+                asChild
+                variant="outline"
+                className="border-[#00C4B4]/50 text-[#00C4B4] hover:bg-[#00C4B4]/10 bg-transparent"
+              >
                 <Link href="/profile/settings">
                   <Settings className="h-4 w-4 mr-2" />
                   Settings
@@ -151,7 +159,7 @@ export default function DashboardPage() {
                 asChild
                 className="bg-gradient-to-r from-[#007BFF] to-[#00C4B4] hover:from-[#0056b3] hover:to-[#009688]"
               >
-                <Link href="/3d-playground">
+                <Link href="/outfit-picker">
                   <Palette className="h-4 w-4 mr-2" />
                   Create Outfit
                 </Link>
@@ -244,7 +252,7 @@ export default function DashboardPage() {
 
           {/* Main Content Tabs */}
           <Tabs defaultValue="overview" className="space-y-6">
-            <TabsList className="grid w-full grid-cols-4 bg-[#1A1A1A]/50 backdrop-blur-lg border border-[#00C4B4]/20">
+            <TabsList className="grid w-full grid-cols-3 bg-[#1A1A1A]/50 backdrop-blur-lg border border-[#00C4B4]/20">
               <TabsTrigger
                 value="overview"
                 className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-[#007BFF] data-[state=active]:to-[#00C4B4]"
@@ -262,12 +270,6 @@ export default function DashboardPage() {
                 className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-[#007BFF] data-[state=active]:to-[#00C4B4]"
               >
                 Analytics
-              </TabsTrigger>
-              <TabsTrigger
-                value="profile"
-                className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-[#007BFF] data-[state=active]:to-[#00C4B4]"
-              >
-                Profile
               </TabsTrigger>
             </TabsList>
 
@@ -396,7 +398,7 @@ export default function DashboardPage() {
                     <h3 className="text-xl font-semibold text-white mb-2">No outfits yet</h3>
                     <p className="text-zinc-400 mb-6">Start creating your first cosmic outfit!</p>
                     <Button asChild className="bg-gradient-to-r from-[#007BFF] to-[#00C4B4]">
-                      <Link href="/3d-playground">Create Outfit</Link>
+                      <Link href="/outfit-picker">Create Outfit</Link>
                     </Button>
                   </div>
                 ) : (
@@ -436,108 +438,6 @@ export default function DashboardPage() {
               <EnhancedAnalytics />
             </TabsContent>
 
-            {/* Profile Tab */}
-            <TabsContent value="profile" className="space-y-6">
-              <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                {/* Profile Info */}
-                <Card className="lg:col-span-2 bg-[#1A1A1A]/80 border-[#00C4B4]/30 backdrop-blur-lg">
-                  <CardHeader>
-                    <CardTitle>Profile Information</CardTitle>
-                    <CardDescription>Your personal details and account information</CardDescription>
-                  </CardHeader>
-                  <CardContent className="space-y-6">
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                      <div className="space-y-2">
-                        <label className="text-sm font-medium text-zinc-400">Full Name</label>
-                        <div className="flex items-center space-x-2 p-3 bg-[#0A0A1A]/50 rounded-lg">
-                          <User className="h-4 w-4 text-[#00C4B4]" />
-                          <span className="text-white">{profile?.full_name || "Not set"}</span>
-                        </div>
-                      </div>
-                      <div className="space-y-2">
-                        <label className="text-sm font-medium text-zinc-400">Email</label>
-                        <div className="flex items-center space-x-2 p-3 bg-[#0A0A1A]/50 rounded-lg">
-                          <Mail className="h-4 w-4 text-[#00C4B4]" />
-                          <span className="text-white">{user?.email}</span>
-                        </div>
-                      </div>
-                      <div className="space-y-2">
-                        <label className="text-sm font-medium text-zinc-400">Location</label>
-                        <div className="flex items-center space-x-2 p-3 bg-[#0A0A1A]/50 rounded-lg">
-                          <MapPin className="h-4 w-4 text-[#00C4B4]" />
-                          <span className="text-white">
-                            {profile?.city && profile?.country
-                              ? `${profile.city}, ${profile.country}`
-                              : profile?.country || "Not set"}
-                          </span>
-                        </div>
-                      </div>
-                      <div className="space-y-2">
-                        <label className="text-sm font-medium text-zinc-400">Member Since</label>
-                        <div className="flex items-center space-x-2 p-3 bg-[#0A0A1A]/50 rounded-lg">
-                          <Calendar className="h-4 w-4 text-[#00C4B4]" />
-                          <span className="text-white">
-                            {new Date(profile?.created_at || user?.created_at || "").toLocaleDateString()}
-                          </span>
-                        </div>
-                      </div>
-                    </div>
-                    <Button asChild className="w-full bg-gradient-to-r from-[#007BFF] to-[#00C4B4]">
-                      <Link href="/profile/settings">Edit Profile</Link>
-                    </Button>
-                  </CardContent>
-                </Card>
-
-                {/* Quick Actions */}
-                <Card className="bg-[#1A1A1A]/80 border-[#00C4B4]/30 backdrop-blur-lg">
-                  <CardHeader>
-                    <CardTitle>Quick Actions</CardTitle>
-                  </CardHeader>
-                  <CardContent className="space-y-3">
-                    <Button
-                      asChild
-                      variant="outline"
-                      className="w-full justify-start border-[#00C4B4]/50 text-[#00C4B4] hover:bg-[#00C4B4]/10 bg-transparent"
-                    >
-                      <Link href="/3d-playground">
-                        <Palette className="h-4 w-4 mr-2" />
-                        Create New Outfit
-                      </Link>
-                    </Button>
-                    <Button
-                      asChild
-                      variant="outline"
-                      className="w-full justify-start border-[#007BFF]/50 text-[#007BFF] hover:bg-[#007BFF]/10 bg-transparent"
-                    >
-                      <Link href="/gallery">
-                        <Eye className="h-4 w-4 mr-2" />
-                        Browse Gallery
-                      </Link>
-                    </Button>
-                    <Button
-                      asChild
-                      variant="outline"
-                      className="w-full justify-start border-[#FF6B6B]/50 text-[#FF6B6B] hover:bg-[#FF6B6B]/10 bg-transparent"
-                    >
-                      <Link href="/profile">
-                        <User className="h-4 w-4 mr-2" />
-                        View Public Profile
-                      </Link>
-                    </Button>
-                    <Button
-                      asChild
-                      variant="outline"
-                      className="w-full justify-start border-[#4ECDC4]/50 text-[#4ECDC4] hover:bg-[#4ECDC4]/10 bg-transparent"
-                    >
-                      <Link href="/products">
-                        <ShoppingBag className="h-4 w-4 mr-2" />
-                        Shop Products
-                      </Link>
-                    </Button>
-                  </CardContent>
-                </Card>
-              </div>
-            </TabsContent>
           </Tabs>
         </div>
       </div>
