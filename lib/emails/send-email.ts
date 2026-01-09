@@ -1,7 +1,15 @@
 import { Resend } from 'resend';
 import { OrderConfirmationEmail } from './order-confirmation-template';
 
-const resend = new Resend(process.env.RESEND_API_KEY);
+// Lazy initialization of Resend client to avoid build-time errors
+let resend: Resend | null = null;
+
+function getResendClient() {
+  if (!resend) {
+    resend = new Resend(process.env.RESEND_API_KEY || '');
+  }
+  return resend;
+}
 
 export interface SendOrderConfirmationEmailParams {
   orderId: string;
@@ -100,7 +108,8 @@ export async function sendOrderConfirmationEmail(params: SendOrderConfirmationEm
     let response;
     try {
       console.log('[Email] Attempting to send with Resend API...');
-      response = await resend.emails.send({
+      const resendClient = getResendClient();
+      response = await resendClient.emails.send({
         from: fromEmail,
         to: params.customerEmail, // Email sent to exact customer email
         subject: `Order Confirmation - ${params.orderNumber} | Cosmic Outfits`,
