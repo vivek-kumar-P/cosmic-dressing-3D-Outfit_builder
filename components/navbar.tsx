@@ -70,6 +70,7 @@ export default function Navbar() {
     { href: "/", label: "Home", icon: <Home className="h-4 w-4 mr-2" /> },
     { href: "/products", label: "Shop", icon: <ShoppingCart className="h-4 w-4 mr-2" /> },
     { href: "/customize", label: "Customize", icon: <Wand2 className="h-4 w-4 mr-2" /> },
+    { href: "/3d-preview", label: "3D Builder", icon: <Palette className="h-4 w-4 mr-2" /> },
     { href: "/outfit-picker", label: "Build Outfit", icon: <Palette className="h-4 w-4 mr-2" /> },
     { href: "/gallery", label: "Gallery", icon: <GridIcon className="h-4 w-4 mr-2" /> },
   ]

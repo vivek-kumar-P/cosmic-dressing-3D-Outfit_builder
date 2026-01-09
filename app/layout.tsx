@@ -15,7 +15,10 @@ const inter = Inter({ subsets: ["latin"] })
 export const metadata: Metadata = {
   title: "3D Outfit Builder",
   description: "Create and customize your own 3D outfits",
-    generator: 'v0.app'
+  generator: 'v0.app',
+  icons: {
+    icon: '/favicon.svg',
+  }
 }
 
 export default function RootLayout({

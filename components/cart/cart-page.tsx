@@ -11,12 +11,20 @@ import { useCart } from "@/contexts/cart-context"
 import { calculateTotals } from "@/lib/pricing"
 import { motion, AnimatePresence } from "framer-motion"
 import { toast } from "@/hooks/use-toast"
+import { useOutfitUrlParams } from "@/hooks/use-outfit-url-params"
+import { use3DOutfitLoader } from "@/hooks/use-3d-outfit-loader"
 
 export default function CartPage() {
   const { items, updateQuantity, removeItem, totalPrice, totalItems } = useCart()
   const [promoCode, setPromoCode] = useState("")
   const [discount, setDiscount] = useState(0)
   const [isApplyingPromo, setIsApplyingPromo] = useState(false)
+
+  // Parse and handle outfit URL parameters on mount
+  useOutfitUrlParams()
+  
+  // Load 3D outfit from localStorage on mount
+  use3DOutfitLoader()
 
   const { shipping, tax, total } = calculateTotals({ items, discount })
 

@@ -47,7 +47,7 @@ export default function CheckoutForm() {
 
   const { subtotal, shipping, tax, total } = calculateTotals({ items: cartItems })
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
     if (cartItems.length === 0) {
       setFormError("Your cart is empty. Add items before checkout.")
@@ -57,7 +57,7 @@ export default function CheckoutForm() {
     setIsSubmitting(true)
     const name = `${firstName.trim()} ${lastName.trim()}`.trim()
 
-    setTimeout(() => {
+    setTimeout(async () => {
       // Build order items from cart
       const itemsForOrder = cartItems.map((ci) => ({
         id: ci.id,
@@ -69,7 +69,7 @@ export default function CheckoutForm() {
         color: ci.color,
       }))
 
-      const orderId = placeOrder({
+      const orderData = {
         email,
         items: itemsForOrder,
         shippingAddress: name || address ? { name, address, city, zipCode } : undefined,
@@ -77,7 +77,79 @@ export default function CheckoutForm() {
         shipping,
         tax,
         total,
-      })
+      }
+
+      const orderId = placeOrder(orderData)
+
+      // Get the order details to send email
+      const orders = JSON.parse(localStorage.getItem('cosmic-orders') || '[]')
+      const newOrder = orders[0]
+
+      if (newOrder && email) {
+        try {
+          // Log: Sending email to user's exact email address
+          console.log('[Checkout] Order created successfully', {
+            orderId: newOrder.id,
+            orderNumber: newOrder.orderNumber,
+            customerEmail: email,
+            itemCount: itemsForOrder.length,
+          })
+          
+          console.log('[Checkout] Preparing email request payload', {
+            customerEmail: email,
+            customerName: name,
+            itemCount: itemsForOrder.length,
+            total: total,
+          })
+
+          // Build request payload
+          const emailPayload = {
+            orderId: newOrder.id,
+            orderNumber: newOrder.orderNumber,
+            customerName: name || 'Valued Customer',
+            customerEmail: email, // User's exact email from checkout form
+            items: itemsForOrder,
+            subtotal,
+            shipping,
+            tax,
+            total,
+            shippingAddress: orderData.shippingAddress,
+            trackingNumber: newOrder.trackingNumber,
+          }
+
+          console.log('[Checkout] Email payload prepared, sending to API')
+          
+          // Send order confirmation email to the exact user email
+          const emailResponse = await fetch('/api/send-order-confirmation', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(emailPayload),
+          })
+          
+          console.log('[Checkout] API Response status:', emailResponse.status)
+          
+          const emailResult = await emailResponse.json()
+          
+          if (emailResult.success) {
+            console.log('[Checkout] ✅ Email sent successfully to:', email, {
+              messageId: emailResult.messageId,
+            })
+          } else {
+            console.error('[Checkout] ❌ Email sending failed:', {
+              error: emailResult.error,
+              details: emailResult.details,
+              status: emailResponse.status,
+            })
+          }
+        } catch (error) {
+          console.error('[Checkout] ❌ ERROR sending order confirmation email:', {
+            error: error instanceof Error ? error.message : String(error),
+            stack: error instanceof Error ? error.stack : undefined,
+            type: error?.constructor?.name,
+          })
+          // Email sending error shouldn't prevent order completion
+        }
+      }
 
       clearCart()
       setIsSubmitting(false)

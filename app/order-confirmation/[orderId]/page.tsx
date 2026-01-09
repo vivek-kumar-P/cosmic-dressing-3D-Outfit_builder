@@ -258,15 +258,16 @@ export default function OrderConfirmationPage() {
                 <Separator className="bg-zinc-700" />
 
                 <div className="space-y-2 text-sm text-zinc-400">
-                  <p>
-                    <strong className="text-white">Order Date:</strong> {order.date}
-                  </p>
-                  <p>
-                    <strong className="text-white">Status:</strong>{" "}
+                  <div className="flex items-center gap-2">
+                    <strong className="text-white">Order Date:</strong>
+                    <span>{order.date}</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <strong className="text-white">Status:</strong>
                     <Badge className="bg-green-500/20 text-green-400 border-green-500/30">
                       {order.status}
                     </Badge>
-                  </p>
+                  </div>
                 </div>
 
                 <Button
