@@ -12,18 +12,23 @@ const MODEL_URL = "/models/shirt_baked.glb"
 
 function sanitizeImageUrl(src: string | undefined): string | undefined {
 	if (!src) return undefined
+	const value = src.trim()
+	if (!value) return undefined
 	// Allow data URLs directly
-	if (src.startsWith("data:")) return src
+	if (value.startsWith("data:")) return value
+	if (value.startsWith("blob:")) return value
+	if (value.startsWith("/")) return value
 	// Try to extract direct image URL from Google imgres links
 	try {
-		const u = new URL(src)
+		const u = new URL(value)
 		if (u.hostname.includes("google") && u.pathname.includes("imgres")) {
 			const raw = u.searchParams.get("imgurl")
 			if (raw) return decodeURIComponent(raw)
 		}
+		if (u.protocol === "http:" || u.protocol === "https:") return value
 	} catch {}
-	// Only allow obvious image URLs to avoid loader errors
-	if (/\.(png|jpg|jpeg|webp|gif|svg)(\?.*)?$/i.test(src)) return src
+	// Allow obvious relative image paths even if URL parsing fails
+	if (/\.(png|jpg|jpeg|webp|gif|svg)(\?.*)?$/i.test(value)) return value
 	return undefined
 }
 

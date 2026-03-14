@@ -58,8 +58,9 @@ export default function FilePicker() {
 				<button
 					className="btn btn-sm"
 					onClick={() => {
-						if (!logoUrl) return
-						customizationState.logoDecal = logoUrl
+						const value = logoUrl.trim()
+						if (!value) return
+						customizationState.logoDecal = value
 						customizationState.isLogoTexture = true
 					}}
 				>
@@ -77,8 +78,9 @@ export default function FilePicker() {
 				<button
 					className="btn btn-sm"
 					onClick={() => {
-						if (!fullUrl) return
-						customizationState.fullDecal = fullUrl
+						const value = fullUrl.trim()
+						if (!value) return
+						customizationState.fullDecal = value
 						customizationState.isFullTexture = true
 					}}
 				>
