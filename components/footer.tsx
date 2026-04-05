@@ -11,7 +11,7 @@ const footerLinks = {
     { name: "Outfit Builder", href: "/outfit-picker" },
     { name: "Gallery", href: "/gallery" },
     { name: "Customize", href: "/customize" },
-    { name: "Products", href: "/products" },
+    { name: "Browse Gallery", href: "/gallery" },
   ],
   company: [
     { name: "Dashboard", href: "/dashboard" },
@@ -23,7 +23,7 @@ const footerLinks = {
     { name: "Settings", href: "/profile/settings" },
     { name: "Checkout", href: "/checkout" },
     { name: "Gallery", href: "/gallery" },
-    { name: "Products", href: "/products" },
+    { name: "Browse Gallery", href: "/gallery" },
   ],
   legal: [
     { name: "Sign In", href: "/auth/login" },

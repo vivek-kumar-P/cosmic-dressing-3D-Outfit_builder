@@ -16,67 +16,91 @@ const trendingOutfits = [
     id: 1,
     title: "Summer Breeze Collection",
     creator: "Sarah M.",
-    image: "/placeholder.svg?height=400&width=300",
+    image: "/images/curated-fashion-50/women-wear-products-50/06_t-shirt_36908588.jpg",
     likes: 1234,
     views: 5678,
     tags: ["Summer", "Casual", "Trendy"],
     trending: true,
     price: 89.99,
+    colors: ["White", "Blue"],
+    season: "Summer",
+    occasion: "Casual",
+    fabric: "Cotton",
   },
   {
     id: 2,
     title: "Urban Street Style",
     creator: "Alex K.",
-    image: "/placeholder.svg?height=400&width=300",
+    image: "/images/curated-fashion-50/fashion/07_fashion_20441555.jpg",
     likes: 987,
     views: 3456,
     tags: ["Street", "Urban", "Cool"],
     trending: true,
     price: 129.99,
+    colors: ["Black", "Gray"],
+    season: "Autumn",
+    occasion: "Streetwear",
+    fabric: "Denim",
   },
   {
     id: 3,
     title: "Elegant Evening Wear",
     creator: "Emma R.",
-    image: "/placeholder.svg?height=400&width=300",
+    image: "/images/curated-fashion-50/women-wear-products-50/44_saaree_30592270.jpg",
     likes: 2156,
     views: 7890,
     tags: ["Elegant", "Evening", "Formal"],
     trending: true,
     price: 199.99,
+    colors: ["Gold", "Red"],
+    season: "Winter",
+    occasion: "Formal",
+    fabric: "Silk",
   },
   {
     id: 4,
     title: "Cozy Autumn Vibes",
     creator: "Mike D.",
-    image: "/placeholder.svg?height=400&width=300",
+    image: "/images/curated-fashion-50/men-shirts-10/07_men-shirt_9558723.jpg",
     likes: 876,
     views: 2345,
     tags: ["Autumn", "Cozy", "Warm"],
     trending: false,
     price: 79.99,
+    colors: ["Brown", "Beige"],
+    season: "Autumn",
+    occasion: "Casual",
+    fabric: "Wool",
   },
   {
     id: 5,
     title: "Business Professional",
     creator: "Lisa W.",
-    image: "/placeholder.svg?height=400&width=300",
+    image: "/images/curated-fashion-50/fashion/22_fashion_23947090.jpg",
     likes: 654,
     views: 1987,
     tags: ["Business", "Professional", "Smart"],
     trending: false,
     price: 159.99,
+    colors: ["Navy", "White"],
+    season: "Spring",
+    occasion: "Work",
+    fabric: "Cotton",
   },
   {
     id: 6,
     title: "Bohemian Chic",
     creator: "Maya P.",
-    image: "/placeholder.svg?height=400&width=300",
+    image: "/images/curated-fashion-50/fashion/16_fashion_9821877.jpg",
     likes: 1543,
     views: 4321,
     tags: ["Bohemian", "Chic", "Artistic"],
     trending: true,
     price: 109.99,
+    colors: ["Green", "Beige"],
+    season: "Summer",
+    occasion: "Party",
+    fabric: "Linen",
   },
 ]
 
@@ -246,6 +270,20 @@ export default function TrendingOutfits() {
                           {tag}
                         </Badge>
                       ))}
+                    </div>
+
+                    <div className="flex flex-wrap gap-2">
+                      {outfit.colors.map((color) => (
+                        <Badge key={color} variant="secondary" className="text-xs bg-gray-100 text-gray-700">
+                          {color}
+                        </Badge>
+                      ))}
+                    </div>
+
+                    <div className="flex flex-wrap gap-3 text-xs text-gray-500">
+                      <span>{outfit.season}</span>
+                      <span>{outfit.occasion}</span>
+                      <span>{outfit.fabric}</span>
                     </div>
 
                     <div className="flex items-center justify-between pt-2 border-t border-gray-100">

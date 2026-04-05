@@ -126,7 +126,7 @@ export default function OrderConfirmationPage() {
         </Card>
       </div>
     )
-  }
+                  Continue Browsing
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-[#0A0A1A] to-[#1A1A3A] text-white py-20 px-4 pt-24">
@@ -304,9 +304,9 @@ export default function OrderConfirmationPage() {
             asChild
             className="flex-1 bg-gradient-to-r from-[#007BFF] to-[#00C4B4] hover:opacity-90"
           >
-            <Link href="/products">
+            <Link href="/gallery">
               <Home className="h-4 w-4 mr-2" />
-              Continue Shopping
+              Continue Browsing
             </Link>
           </Button>
         </motion.div>

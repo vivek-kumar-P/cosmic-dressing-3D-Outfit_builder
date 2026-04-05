@@ -64,7 +64,7 @@ export default function CartPage() {
             <ShoppingBag className="h-24 w-24 text-gray-400 mx-auto mb-6" />
             <h1 className="text-3xl font-bold mb-4">Your Cart is Empty</h1>
             <p className="text-gray-400 mb-8">Looks like you haven't added anything to your cart yet.</p>
-            <Link href="/products">
+            <Link href="/gallery">
               <Button className="bg-gradient-to-r from-[#00C4B4] to-[#007BFF] text-white px-8 py-3">
                 Start Shopping
               </Button>
@@ -84,7 +84,7 @@ export default function CartPage() {
             <h1 className="text-3xl md:text-4xl font-bold">Shopping Cart</h1>
             <p className="text-gray-400 mt-2">{totalItems} items in your cart</p>
           </div>
-          <Link href="/products">
+          <Link href="/gallery">
             <Button variant="outline" className="border-white/20 text-white hover:bg-white/10 bg-transparent">
               <ArrowLeft className="mr-2 h-4 w-4" />
               Continue Shopping

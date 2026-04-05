@@ -161,18 +161,18 @@ export default function ProductDetailPage() {
             Home
           </Link>
           <span>/</span>
-          <Link href="/products" className="hover:text-white">
-            Products
+          <Link href="/gallery" className="hover:text-white">
+            Gallery
           </Link>
           <span>/</span>
           <span className="text-white">{product.name}</span>
         </div>
 
         {/* Back Button */}
-        <Link href="/products">
+        <Link href="/gallery">
           <Button variant="outline" className="mb-6 border-white/20 text-white hover:bg-white/10 bg-transparent">
             <ArrowLeft className="mr-2 h-4 w-4" />
-            Back to Products
+            Back to Gallery
           </Button>
         </Link>
 

@@ -214,7 +214,7 @@ ${order.items
                         : "Start shopping to see your orders here"}
                     </p>
                     <Button asChild className="bg-gradient-to-r from-[#007BFF] to-[#00C4B4]">
-                      <Link href="/products">Browse Products</Link>
+                      <Link href="/gallery">Browse Gallery</Link>
                     </Button>
                   </CardContent>
                 </Card>

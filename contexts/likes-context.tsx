@@ -19,6 +19,7 @@ type LikesContextType = {
   addLike: (item: Omit<LikedItem, "likedAt">) => void
   removeLike: (itemId: number) => void
   isLiked: (itemId: number) => boolean
+  clearLikes: () => void
   totalLikes: number
 }
 
@@ -66,6 +67,10 @@ export function LikesProvider({ children }: { children: React.ReactNode }) {
     setLikedItems((prevItems) => prevItems.filter((item) => item.id !== itemId))
   }
 
+  const clearLikes = () => {
+    setLikedItems([])
+  }
+
   const isLiked = (itemId: number) => {
     return likedItems.some((item) => item.id === itemId)
   }
@@ -79,6 +84,7 @@ export function LikesProvider({ children }: { children: React.ReactNode }) {
         addLike,
         removeLike,
         isLiked,
+        clearLikes,
         totalLikes,
       }}
     >

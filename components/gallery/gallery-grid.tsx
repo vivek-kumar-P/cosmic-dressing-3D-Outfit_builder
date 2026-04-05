@@ -10,10 +10,10 @@ import { Card, CardContent } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Eye, ShoppingBag, Loader } from "lucide-react"
-import ProductModelViewer from "@/components/3d/product-model-viewer"
 import { supabase } from "@/lib/supabase"
 import { useAuth } from "@/contexts/auth-context"
 import { toast } from "@/hooks/use-toast"
+import { getFashionCategoryLabel } from "@/lib/constants/fashion-taxonomy"
 
 // Register GSAP plugins
 if (typeof window !== "undefined") {
@@ -26,7 +26,134 @@ interface GalleryGridProps {
     style?: string[]
     priceRange?: [number, number]
     search?: string
+    colors?: string[]
+    seasons?: string[]
+    occasions?: string[]
+    fabrics?: string[]
+    tags?: string[]
   }
+}
+
+const categoryImagePools: Record<string, string[]> = {
+  tops: [
+    "/images/curated-fashion-50/men-shirts-10/01_men-shirt_11100290.jpg",
+    "/images/curated-fashion-50/men-shirts-10/03_men-shirt_11100293.jpg",
+    "/images/curated-fashion-50/women-wear-products-50/18_shirts_14870714.jpg",
+  ],
+  bottoms: [
+    "/images/curated-fashion-50/men-pants-10/01_men-pants_4109797.jpg",
+    "/images/curated-fashion-50/men-pants-10/03_men-pants_6069087.jpg",
+    "/images/curated-fashion-50/women-wear-products-50/12_pants_3927390.jpg",
+  ],
+  dresses: [
+    "/images/curated-fashion-50/women-wear-products-50/35_full-kurtas_29138637.jpg",
+    "/images/curated-fashion-50/women-wear-products-50/44_saaree_30592270.jpg",
+    "/images/curated-fashion-50/women-wear-products-50/05_t-shirt_4440572.jpg",
+  ],
+  shoes: [
+    "/images/curated-fashion-50/men-shoes-10/01_loafers_9992899.jpg",
+    "/images/curated-fashion-50/men-shoes-10/03_brogue_6765524.jpg",
+    "/images/curated-fashion-50/women-footwear-20/01_sandals_29096391.jpg",
+  ],
+  accessories: [
+    "/images/curated-fashion-50/watches/25_watches_30799588.jpg",
+    "/images/curated-fashion-50/sunglasses/41_sunglasses_29538714.jpg",
+    "/images/curated-fashion-50/women-jewelry-30/13_earrings_4225085.jpg",
+  ],
+  "men-shoes": [
+    "/images/curated-fashion-50/men-shoes-10/02_loafers_29258015.jpg",
+    "/images/curated-fashion-50/men-shoes-10/04_formal-black_292999.jpg",
+  ],
+  "women-fashion": [
+    "/images/curated-fashion-50/women-fashion/079_women-fashion_5050.jpg",
+    "/images/curated-fashion-50/women-fashion/109_women-fashion_5114.jpg",
+  ],
+  "women-jewelry": [
+    "/images/curated-fashion-50/women-jewelry-30/09_necklace_4295006.jpg",
+    "/images/curated-fashion-50/women-jewelry-30/27_bracelet_14666597.jpg",
+  ],
+  sunglasses: [
+    "/images/curated-fashion-50/sunglasses/44_sunglasses_31538078.jpg",
+    "/images/curated-fashion-50/sunglasses/49_sunglasses_5202051.jpg",
+  ],
+  "men-marriage-wear": [
+    "/images/curated-fashion-50/men-marriage-10/01_sherwani_36836731.jpg",
+    "/images/curated-fashion-50/men-marriage-10/09_shirt-pant_30324809.jpg",
+  ],
+  default: [
+    "/images/curated-fashion-50/fashion/07_fashion_20441555.jpg",
+    "/images/curated-fashion-50/fashion/12_fashion_8945179.jpg",
+    "/images/curated-fashion-50/fashion/22_fashion_23947090.jpg",
+  ],
+}
+
+const getCardImage = (item: any, index: number) => {
+  const existingImage = item.image_url || item.image || item.thumbnail || item.photo_url
+  if (existingImage) {
+    return existingImage
+  }
+
+  const categoryKey = String(item.category || "default").toLowerCase()
+  const pool = categoryImagePools[categoryKey] || categoryImagePools.default
+  return pool[index % pool.length]
+}
+
+const inferMeta = (item: any) => {
+  const category = String(item.category || "").toLowerCase()
+  const style = String(item.style || "casual").toLowerCase()
+  const existingTags = Array.isArray(item.tags) ? item.tags.map((tag: string) => String(tag).toLowerCase()) : []
+  const existingColors = Array.isArray(item.colors) ? item.colors.map((color: string) => String(color).toLowerCase()) : []
+
+  return {
+    colors: existingColors.length > 0 ? existingColors : [category.includes("shoe") ? "black" : "white"],
+    seasons: item.season ? [String(item.season).toLowerCase()] : [style === "formal" ? "winter" : "summer"],
+    occasions: item.occasion ? [String(item.occasion).toLowerCase()] : [style],
+    fabrics: item.fabric ? [String(item.fabric).toLowerCase()] : [style === "formal" ? "silk" : "cotton"],
+    tags: existingTags.length > 0 ? existingTags : [item.is_new ? "new" : "minimal", style],
+  }
+}
+
+const matchesAny = (source: string[] | undefined, target: string[] | undefined) => {
+  if (!target || target.length === 0) {
+    return true
+  }
+
+  if (!source || source.length === 0) {
+    return false
+  }
+
+  return target.some((value) => source.includes(value))
+}
+
+const applyGalleryFilters = (items: any[], filters?: GalleryGridProps["filters"]) => {
+  if (!filters) {
+    return items
+  }
+
+  return items.filter((item) => {
+    const meta = inferMeta(item)
+
+    const categoryMatch = !filters.category || filters.category.length === 0 || filters.category.includes(String(item.category))
+    const styleMatch = !filters.style || filters.style.length === 0 || filters.style.includes(String(item.style))
+    const priceMatch = !filters.priceRange || (item.price >= filters.priceRange[0] && item.price <= filters.priceRange[1])
+    const searchMatch =
+      !filters.search ||
+      String(item.name).toLowerCase().includes(filters.search.toLowerCase()) ||
+      String(item.category).toLowerCase().includes(filters.search.toLowerCase()) ||
+      String(item.style || "").toLowerCase().includes(filters.search.toLowerCase())
+
+    return (
+      categoryMatch &&
+      styleMatch &&
+      priceMatch &&
+      searchMatch &&
+      matchesAny(meta.colors, filters.colors) &&
+      matchesAny(meta.seasons, filters.seasons) &&
+      matchesAny(meta.occasions, filters.occasions) &&
+      matchesAny(meta.fabrics, filters.fabrics) &&
+      matchesAny(meta.tags, filters.tags)
+    )
+  })
 }
 
 export default function GalleryGrid({ filters }: GalleryGridProps) {
@@ -91,7 +218,7 @@ export default function GalleryGrid({ filters }: GalleryGridProps) {
       id: "fb-6",
       name: "Formal Suit",
       price: 299.99,
-      category: "tops",
+      category: "men-marriage-wear",
       style: "formal",
       is_new: false,
       model_url: "/models/suit_formal.glb",
@@ -100,7 +227,7 @@ export default function GalleryGrid({ filters }: GalleryGridProps) {
       id: "fb-7",
       name: "Winter Coat",
       price: 149.99,
-      category: "tops",
+      category: "women-fashion",
       style: "casual",
       is_new: false,
       model_url: "/models/coat_winter.glb",
@@ -118,7 +245,7 @@ export default function GalleryGrid({ filters }: GalleryGridProps) {
       id: "fb-9",
       name: "Silver Necklace",
       price: 49.99,
-      category: "accessories",
+      category: "women-jewelry",
       style: "formal",
       is_new: false,
       model_url: "/models/necklace_silver.glb",
@@ -145,7 +272,7 @@ export default function GalleryGrid({ filters }: GalleryGridProps) {
       id: "fb-12",
       name: "Designer Sunglasses",
       price: 129.99,
-      category: "accessories",
+      category: "sunglasses",
       style: "streetwear",
       is_new: true,
       model_url: "/models/sunglasses_designer.glb",
@@ -154,7 +281,7 @@ export default function GalleryGrid({ filters }: GalleryGridProps) {
       id: "fb-13",
       name: "Formal Dress Shoes",
       price: 119.99,
-      category: "shoes",
+      category: "men-shoes",
       style: "formal",
       is_new: false,
       model_url: "/models/shoes_formal.glb",
@@ -222,8 +349,10 @@ export default function GalleryGrid({ filters }: GalleryGridProps) {
 
       if (error) throw error
 
-      setProducts(data || [])
-      setHasMore(data && data.length === 12)
+      const filteredData = applyGalleryFilters(data || [], filters)
+
+      setProducts(filteredData)
+      setHasMore(Boolean(data && data.length === 12))
     } catch (error) {
       console.error("Error fetching products:", error)
       toast({
@@ -351,13 +480,13 @@ export default function GalleryGrid({ filters }: GalleryGridProps) {
     <div>
       <div className="flex justify-between items-center mb-6">
         <div>
-          <h2 className="text-2xl font-bold">All Items</h2>
-          <p className="text-zinc-400">Showing {products.length} results</p>
+          <h2 className="text-2xl font-bold tracking-tight">Curated Results</h2>
+          <p className="text-zinc-400">Showing {products.length} matching items</p>
         </div>
 
         <div className="flex items-center gap-2">
           <select
-            className="bg-[#1A1A1A] border border-zinc-700 rounded-md px-3 py-2 text-sm"
+            className="bg-[#121212] border border-zinc-700 rounded-md px-3 py-2 text-sm text-zinc-100"
             value={sortBy}
             onChange={handleSortChange}
           >
@@ -376,25 +505,22 @@ export default function GalleryGrid({ filters }: GalleryGridProps) {
         <div>
           <div className="flex justify-between items-center mb-6">
             <div>
-              <h2 className="text-2xl font-bold">Sample Gallery Items</h2>
-              <p className="text-zinc-400">Showing sample items while no search results found</p>
+              <h2 className="text-2xl font-bold tracking-tight">Suggested Gallery Items</h2>
+              <p className="text-zinc-400">Showing curated samples while your filters load no matches</p>
             </div>
           </div>
 
           <div ref={gridRef} className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            {fallbackProducts.map((item) => (
+            {fallbackProducts.map((item, index) => (
               <Card
                 key={item.id}
                 className="gallery-item bg-[#1A1A1A]/80 border-[#00C4B4]/30 backdrop-blur-lg overflow-hidden group"
               >
                 <div className="relative h-[350px] overflow-hidden">
-                  <ProductModelViewer
-                    modelUrl={item.model_url || "/models/duck.glb"}
-                    height="350px"
-                    width="100%"
-                    autoRotate={true}
-                    interactive={false}
-                    className="w-full h-full"
+                  <img
+                    src={getCardImage(item, index)}
+                    alt={item.name}
+                    className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
                   />
 
                   {item.is_new && <Badge className="absolute top-3 left-3 bg-[#00C4B4] text-black">New</Badge>}
@@ -427,7 +553,7 @@ export default function GalleryGrid({ filters }: GalleryGridProps) {
                   </div>
                   <div className="flex gap-2">
                     <Badge variant="outline" className="text-xs border-zinc-700 text-zinc-400">
-                      {item.category.charAt(0).toUpperCase() + item.category.slice(1)}
+                      {getFashionCategoryLabel(item.category)}
                     </Badge>
                     <Badge variant="outline" className="text-xs border-zinc-700 text-zinc-400">
                       {item.style.charAt(0).toUpperCase() + item.style.slice(1)}
@@ -440,19 +566,16 @@ export default function GalleryGrid({ filters }: GalleryGridProps) {
         </div>
       ) : (
         <div ref={gridRef} className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-          {products.map((item) => (
+          {products.map((item, index) => (
             <Card
               key={item.id}
               className="gallery-item bg-[#1A1A1A]/80 border-[#00C4B4]/30 backdrop-blur-lg overflow-hidden group"
             >
               <div className="relative h-[350px] overflow-hidden">
-                <ProductModelViewer
-                  modelUrl={item.model_url || "/assets/3d/duck.glb"}
-                  height="350px"
-                  width="100%"
-                  autoRotate={true}
-                  interactive={false}
-                  className="w-full h-full"
+                <img
+                  src={getCardImage(item, index)}
+                  alt={item.name}
+                  className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
                 />
 
                 {item.is_new && <Badge className="absolute top-3 left-3 bg-[#00C4B4] text-black">New</Badge>}
@@ -490,7 +613,7 @@ export default function GalleryGrid({ filters }: GalleryGridProps) {
                 </div>
                 <div className="flex gap-2">
                   <Badge variant="outline" className="text-xs border-zinc-700 text-zinc-400">
-                    {item.category.charAt(0).toUpperCase() + item.category.slice(1)}
+                    {getFashionCategoryLabel(item.category)}
                   </Badge>
                   <Badge variant="outline" className="text-xs border-zinc-700 text-zinc-400">
                     {item.style.charAt(0).toUpperCase() + item.style.slice(1)}

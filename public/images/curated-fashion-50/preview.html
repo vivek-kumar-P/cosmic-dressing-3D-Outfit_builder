@@ -1,0 +1,100 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Curated Fashion 50 Preview</title>
+  <style>
+    :root {
+      --bg: #f5f2ec;
+      --card: #ffffff;
+      --text: #1f1f1f;
+      --muted: #666;
+      --border: #e6e0d6;
+    }
+    body {
+      margin: 0;
+      font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+      background: radial-gradient(circle at 20% 10%, #fffaf2 0%, var(--bg) 55%);
+      color: var(--text);
+    }
+    .wrap {
+      max-width: 1320px;
+      margin: 0 auto;
+      padding: 24px;
+    }
+    h1 {
+      margin: 0 0 8px;
+      font-size: 28px;
+    }
+    p {
+      margin: 0 0 20px;
+      color: var(--muted);
+    }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+      gap: 14px;
+    }
+    a.card {
+      display: block;
+      margin: 0;
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 8px 26px rgba(0, 0, 0, 0.06);
+      color: inherit;
+      text-decoration: none;
+    }
+    .cover {
+      height: 140px;
+      background: linear-gradient(135deg, #e9e1d4 0%, #d8c7b0 100%);
+    }
+    .body {
+      padding: 12px 12px 14px;
+    }
+    .label {
+      display: block;
+      font-weight: 700;
+      margin-bottom: 4px;
+    }
+    .meta {
+      font-size: 12px;
+      color: var(--muted);
+    }
+  </style>
+</head>
+<body>
+  <main class="wrap">
+    <h1>Curated Fashion Folder Index</h1>
+    <p>The root JPGs were sorted into category folders based on their filenames.</p>
+    <section class="grid">
+      <a class="card" href="fashion/">
+        <div class="cover"></div>
+        <div class="body"><span class="label">fashion</span><span class="meta">24 images</span></div>
+      </a>
+      <a class="card" href="watches/">
+        <div class="cover"></div>
+        <div class="body"><span class="label">watches</span><span class="meta">13 images</span></div>
+      </a>
+      <a class="card" href="sunglasses/">
+        <div class="cover"></div>
+        <div class="body"><span class="label">sunglasses</span><span class="meta">13 images</span></div>
+      </a>
+      <a class="card" href="women-fashion/">
+        <div class="cover"></div>
+        <div class="body"><span class="label">women-fashion</span><span class="meta">3 images</span></div>
+      </a>
+      <a class="card" href="bracelets/">
+        <div class="cover"></div>
+        <div class="body"><span class="label">bracelets</span><span class="meta">4 images</span></div>
+      </a>
+      <a class="card" href="indian-wedding-kids/">
+        <div class="cover"></div>
+        <div class="body"><span class="label">indian-wedding-kids</span><span class="meta">1 image</span></div>
+      </a>
+    </section>
+  </main>
+</body>
+</html>

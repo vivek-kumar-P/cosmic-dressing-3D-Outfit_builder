@@ -11,6 +11,7 @@ import { motion } from "framer-motion"
 import { gsap } from "gsap"
 import { useCart } from "@/contexts/cart-context"
 import { toast } from "@/hooks/use-toast"
+import { landingHeroCategories } from "@/lib/constants/fashion-taxonomy"
 
 const featuredProducts = [
   {
@@ -20,9 +21,14 @@ const featuredProducts = [
     originalPrice: 120,
     rating: 4.8,
     reviews: 124,
-    image: "/placeholder.svg?height=300&width=300&text=Cosmic+Jacket",
+    image: "/images/curated-fashion-50/men-shirts-10/08_men-shirt_28576630.jpg",
     category: "Jackets",
     isNew: true,
+    colors: ["Blue", "Black"],
+    season: "Autumn",
+    occasion: "Casual",
+    fabric: "Denim",
+    tags: ["new", "premium", "minimal"],
   },
   {
     id: 2,
@@ -31,9 +37,14 @@ const featuredProducts = [
     originalPrice: 85,
     rating: 4.9,
     reviews: 89,
-    image: "/placeholder.svg?height=300&width=300&text=Stellar+Sneakers",
+    image: "/images/curated-fashion-50/men-shoes-10/02_loafers_29258015.jpg",
     category: "Shoes",
     isBestseller: true,
+    colors: ["Black", "White"],
+    season: "Winter",
+    occasion: "Formal",
+    fabric: "Leather",
+    tags: ["bestseller", "luxury", "formal"],
   },
   {
     id: 3,
@@ -42,19 +53,15 @@ const featuredProducts = [
     originalPrice: 95,
     rating: 4.7,
     reviews: 156,
-    image: "/placeholder.svg?height=300&width=300&text=Galaxy+Dress",
+    image: "/images/curated-fashion-50/women-wear-products-50/35_full-kurtas_29138637.jpg",
     category: "Dresses",
     isNew: true,
+    colors: ["Red", "Gold"],
+    season: "Summer",
+    occasion: "Party",
+    fabric: "Silk",
+    tags: ["new", "luxury", "formal"],
   },
-]
-
-const categories = [
-  { name: "All", count: 1200, active: true },
-  { name: "Tops", count: 340 },
-  { name: "Bottoms", count: 280 },
-  { name: "Dresses", count: 190 },
-  { name: "Shoes", count: 220 },
-  { name: "Accessories", count: 170 },
 ]
 
 export default function LandingHero() {
@@ -86,8 +93,7 @@ export default function LandingHero() {
   }, [])
 
   const handleSearch = () => {
-    // Navigate to product listing with search query
-    window.location.href = `/products?search=${encodeURIComponent(searchQuery)}&category=${selectedCategory}`
+    window.location.href = `/gallery?search=${encodeURIComponent(searchQuery)}&category=${selectedCategory}`
   }
 
   const handleAddToCart = (product: typeof featuredProducts[number]) => {
@@ -171,19 +177,19 @@ export default function LandingHero() {
 
               {/* Category Filters */}
               <div className="flex flex-wrap gap-2 justify-center">
-                {categories.map((category) => (
+                {landingHeroCategories.map((category) => (
                   <Button
-                    key={category.name}
-                    variant={selectedCategory === category.name ? "default" : "outline"}
+                    key={category.id}
+                    variant={selectedCategory === category.id ? "default" : "outline"}
                     size="sm"
-                    onClick={() => setSelectedCategory(category.name)}
+                    onClick={() => setSelectedCategory(category.id)}
                     className={`${
-                      selectedCategory === category.name
+                      selectedCategory === category.id
                         ? "bg-gradient-to-r from-[#00C4B4] to-[#007BFF] text-white border-0"
                         : "border-white/20 bg-white/5 text-white hover:bg-white/10"
                     }`}
                   >
-                    {category.name}
+                    {category.label}
                     <Badge variant="secondary" className="ml-2 bg-white/20 text-white">
                       {category.count}
                     </Badge>
@@ -198,12 +204,12 @@ export default function LandingHero() {
         <div className="mb-16">
           <div className="flex items-center justify-between mb-8">
             <h2 className="text-3xl md:text-4xl font-bold">Featured Products</h2>
-            <Link href="/products">
+            <Link href="/gallery">
               <Button
                 variant="outline"
                 className="border-[#00C4B4] text-[#00C4B4] hover:bg-[#00C4B4]/10 bg-transparent"
               >
-                View All Products
+                View All Gallery
                 <ArrowRight className="ml-2 h-4 w-4" />
               </Button>
             </Link>
@@ -294,6 +300,20 @@ export default function LandingHero() {
                         </Button>
                       </Link>
                     </div>
+
+                    <div className="mt-4 flex flex-wrap gap-2">
+                      {product.tags?.slice(0, 3).map((tag) => (
+                        <Badge key={tag} variant="outline" className="border-white/20 text-white/80 text-xs">
+                          {tag}
+                        </Badge>
+                      ))}
+                    </div>
+
+                    <div className="mt-3 flex flex-wrap gap-3 text-xs text-gray-300">
+                      <span>{product.season}</span>
+                      <span>{product.occasion}</span>
+                      <span>{product.fabric}</span>
+                    </div>
                   </div>
                 </CardContent>
               </Card>
@@ -309,9 +329,9 @@ export default function LandingHero() {
               Use our outfit builder to visualize how different pieces work together before you buy.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Link href="/products">
+              <Link href="/gallery">
                 <Button size="lg" className="bg-gradient-to-r from-[#00C4B4] to-[#007BFF] text-white px-8">
-                  Browse All Products
+                  Browse Gallery
                 </Button>
               </Link>
               <Link href="/outfit-picker">

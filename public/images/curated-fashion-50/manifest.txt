@@ -1,0 +1,48 @@
+01_fashion_30816952.jpg | 136.2 KB
+Organized curated-fashion-50 root JPGs into category folders.
+
+Root JPGs moved:
+- `bracelets/` = 4 images
+- `fashion/` = 24 images
+- `indian-wedding-kids/` = 1 image
+- `sunglasses/` = 13 images
+- `watches/` = 13 images
+- `women-fashion/` = 3 images
+
+Existing curated folders remain in place:
+- `indian-women-marriage-regional-20/`
+- `men-marriage-10/`
+- `men-pants-10/`
+- `men-shirts-10/`
+- `men-shoes-10/`
+- `women-footwear-20/`
+- `women-jewelry-30/`
+- `women-wear-products-50/`
+23_fashion_9811232.jpg | 377.1 KB
+24_fashion_29708198.jpg | 247.4 KB
+25_watches_30799588.jpg | 232.5 KB
+26_watches_31642725.jpg | 146.8 KB
+27_watches_33558595.jpg | 582.8 KB
+28_watches_33690507.jpg | 290.7 KB
+29_watches_33558596.jpg | 543.2 KB
+30_watches_32528934.jpg | 225 KB
+31_watches_8968349.jpg | 194.7 KB
+32_watches_36812411.jpg | 150.8 KB
+33_watches_33409535.jpg | 443.4 KB
+34_watches_30838490.jpg | 172.3 KB
+35_watches_33409525.jpg | 411.9 KB
+36_watches_6098254.jpg | 243 KB
+37_watches_31513715.jpg | 244.9 KB
+38_sunglasses_31259705.jpg | 119 KB
+39_sunglasses_2767694.jpg | 128.3 KB
+40_sunglasses_20106424.jpg | 82.9 KB
+41_sunglasses_29538714.jpg | 57.2 KB
+42_sunglasses_29274468.jpg | 79.6 KB
+43_sunglasses_31658880.jpg | 267.7 KB
+44_sunglasses_31538078.jpg | 416.3 KB
+45_sunglasses_27347004.jpg | 159.5 KB
+46_sunglasses_343720.jpg | 164.8 KB
+47_sunglasses_26575039.jpg | 131.6 KB
+48_sunglasses_16692930.jpg | 294.5 KB
+49_sunglasses_5202051.jpg | 198 KB
+50_sunglasses_27353347.jpg | 99.7 KB

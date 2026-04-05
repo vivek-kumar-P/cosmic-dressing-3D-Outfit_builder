@@ -29,6 +29,13 @@ export interface Product {
   colors: string[]
   sizes: string[]
   tags: string[]
+  season?: string
+  occasion?: string
+  fabric?: string
+  style?: string
+  rating?: number
+  reviews_count?: number
+  primary_color?: string
   model_url?: string
   images: string[]
   is_active: boolean
@@ -160,6 +167,9 @@ export interface FilterState {
   colors?: string[]
   sizes?: string[]
   tags?: string[]
+  seasons?: string[]
+  occasions?: string[]
+  fabrics?: string[]
   sortBy?: "name" | "price" | "created_at" | "popularity"
   sortOrder?: "asc" | "desc"
 }
