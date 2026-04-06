@@ -126,6 +126,7 @@ export default function OrderConfirmationPage() {
         </Card>
       </div>
     )
+  }
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-[#0A0A1A] to-[#1A1A3A] text-white py-20 px-4 pt-24">
