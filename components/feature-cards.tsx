@@ -6,7 +6,6 @@ import { Card, CardContent } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Palette, Shirt, Sparkles, Users, ShoppingBag, Zap } from "lucide-react"
 import Link from "next/link"
-import Image from "next/image"
 
 const features = [
   {
@@ -16,7 +15,6 @@ const features = [
       "Visualize your perfect outfit before you buy. Mix and match pieces to create your unique style.",
     link: "/outfit-picker",
     color: "from-purple-500 to-pink-500",
-    image: "/images/curated-fashion-50/fashion/12_fashion_8945179.jpg",
   },
   {
     icon: Shirt,
@@ -24,7 +22,6 @@ const features = [
     description: "Get personalized outfit suggestions based on your style preferences, body type, and occasion.",
     link: "/customize",
     color: "from-blue-500 to-cyan-500",
-    image: "/images/curated-fashion-50/men-shirts-10/03_men-shirt_11100293.jpg",
   },
   {
     icon: Sparkles,
@@ -32,7 +29,6 @@ const features = [
     description: "See how clothes look on you with our advanced AR technology. No more guessing about fit and style.",
     link: "/gallery",
     color: "from-green-500 to-teal-500",
-    image: "/images/curated-fashion-50/women-wear-products-50/01_t-shirt_34156905.jpg",
   },
   {
     icon: Users,
@@ -40,7 +36,6 @@ const features = [
     description: "Connect with fashion enthusiasts, share your outfits, and get inspired by trending styles.",
     link: "/gallery",
     color: "from-orange-500 to-red-500",
-    image: "/images/curated-fashion-50/fashion/05_fashion_17143539.jpg",
   },
   {
     icon: ShoppingBag,
@@ -48,7 +43,6 @@ const features = [
     description: "Discover handpicked fashion items from top brands and emerging designers worldwide.",
     link: "/gallery",
     color: "from-indigo-500 to-purple-500",
-    image: "/images/curated-fashion-50/women-wear-products-50/18_shirts_14870714.jpg",
   },
   {
     icon: Zap,
@@ -56,7 +50,6 @@ const features = [
     description: "Get complete outfit suggestions in seconds. Perfect for busy lifestyles and last-minute events.",
     link: "/outfit-picker",
     color: "from-yellow-500 to-orange-500",
-    image: "/images/curated-fashion-50/men-shoes-10/03_brogue_6765524.jpg",
   },
 ]
 
@@ -91,17 +84,6 @@ export default function FeatureCards() {
                 className="group bg-gradient-to-br from-white/10 to-white/5 backdrop-blur-xl border border-white/20 overflow-hidden hover:border-[#00C4B4]/50 transition-all duration-500 hover:scale-105"
               >
                 <CardContent className="p-8 h-full flex flex-col">
-                  <div className="relative w-full h-40 rounded-xl overflow-hidden mb-6">
-                    <Image
-                      src={feature.image}
-                      alt={feature.title}
-                      fill
-                      sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-                      className="object-cover group-hover:scale-105 transition-transform duration-500"
-                    />
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/35 to-transparent" />
-                  </div>
-
                   <div
                     className={`w-16 h-16 rounded-2xl bg-gradient-to-r ${feature.color} flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300`}
                   >

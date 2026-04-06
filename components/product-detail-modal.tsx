@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import {
   Dialog,
   DialogContent,
@@ -37,6 +37,18 @@ export interface ProductDetailItem {
   modelUrl?: string
   color: string
   description?: string
+  brand?: string
+  gender?: string
+  rating?: number
+  reviews?: number
+  inStock?: boolean
+  stockCount?: number
+  occasions?: string[]
+  seasons?: string[]
+  styleTags?: string[]
+  material?: string
+  fit?: string
+  voiceDescription?: string
 }
 
 interface ProductDetailModalProps {
@@ -44,9 +56,10 @@ interface ProductDetailModalProps {
   open: boolean
   onOpenChange: (open: boolean) => void
   onCustomize?: () => void
+  similarItems?: ProductDetailItem[]
 }
 
-// Mock similar items for recommendation
+// Fallback similar items for recommendation
 const getSimilarItems = (item: ProductDetailItem): ProductDetailItem[] => {
   const similarCategories = [
     { id: 101, name: "Stellar Hoodie", category: item.category, price: 59, image: "/placeholder.svg", color: "#4A90E2", description: "Premium quality matching piece" },
@@ -61,6 +74,7 @@ export default function ProductDetailModal({
   open,
   onOpenChange,
   onCustomize,
+  similarItems: similarItemsProp,
 }: ProductDetailModalProps) {
   const { addItem } = useCart()
   const { addLike, removeLike, isLiked } = useLikes()
@@ -68,14 +82,22 @@ export default function ProductDetailModal({
   const [selectedSize, setSelectedSize] = useState<string>("M")
   const [quantity, setQuantity] = useState(1)
 
+  useEffect(() => {
+    if (!item) return
+
+    setSelectedColor(item.color || "#4A90E2")
+    setSelectedSize("M")
+    setQuantity(1)
+  }, [item])
+
   if (!item) return null
 
-  const similarItems = getSimilarItems(item)
+  const similarItems = similarItemsProp?.length ? similarItemsProp : getSimilarItems(item)
   const isItemLiked = isLiked(item.id)
 
   const availableSizes = ["XS", "S", "M", "L", "XL", "2XL", "3XL"]
   const availableColors = ["#FF6B6B", "#4ECDC4", "#45B7D1", "#96CEB4", "#FFEAA7", "#DDA0DD"]
-  const stock = 24 // Mock stock number
+  const stock = item.stockCount ?? 24
 
   const handleAddToCart = () => {
     for (let i = 0; i < quantity; i++) {
@@ -192,6 +214,8 @@ export default function ProductDetailModal({
                 </Button>
               </div>
               <p className="text-zinc-400">Category: <span className="text-white capitalize">{item.category}</span></p>
+              {item.brand ? <p className="text-zinc-400">Brand: <span className="text-white">{item.brand}</span></p> : null}
+              {item.gender ? <p className="text-zinc-400">Gender: <span className="text-white">{item.gender}</span></p> : null}
             </div>
 
             <Separator className="bg-zinc-800" />
@@ -209,21 +233,45 @@ export default function ProductDetailModal({
                   <h4 className="font-semibold text-zinc-300 mb-1">Description</h4>
                   <p className="text-zinc-400">{item.description || "Premium quality clothing item with cosmic-inspired design."}</p>
                 </div>
+                {item.voiceDescription ? (
+                  <div>
+                    <h4 className="font-semibold text-zinc-300 mb-1">Quick Summary</h4>
+                    <p className="text-zinc-400">{item.voiceDescription}</p>
+                  </div>
+                ) : null}
                 <div>
                   <h4 className="font-semibold text-zinc-300 mb-1">Material</h4>
-                  <p className="text-zinc-400">100% Premium Cotton, Soft-touch finish</p>
+                  <p className="text-zinc-400">{item.material || "100% Premium Cotton, Soft-touch finish"}</p>
                 </div>
                 <div>
                   <h4 className="font-semibold text-zinc-300 mb-1">Care Instructions</h4>
                   <p className="text-zinc-400">Machine wash cold. Tumble dry low. Do not bleach.</p>
                 </div>
+                {item.styleTags?.length ? (
+                  <div>
+                    <h4 className="font-semibold text-zinc-300 mb-1">Style Tags</h4>
+                    <p className="text-zinc-400">{item.styleTags.join(", ")}</p>
+                  </div>
+                ) : null}
+                {item.occasions?.length ? (
+                  <div>
+                    <h4 className="font-semibold text-zinc-300 mb-1">Occasions</h4>
+                    <p className="text-zinc-400">{item.occasions.join(", ")}</p>
+                  </div>
+                ) : null}
+                {item.seasons?.length ? (
+                  <div>
+                    <h4 className="font-semibold text-zinc-300 mb-1">Seasons</h4>
+                    <p className="text-zinc-400">{item.seasons.join(", ")}</p>
+                  </div>
+                ) : null}
               </TabsContent>
 
               <TabsContent value="specs" className="space-y-3 text-sm mt-4">
                 <div className="grid grid-cols-2 gap-4">
                   <div>
                     <h4 className="font-semibold text-zinc-300 mb-1">Brand</h4>
-                    <p className="text-zinc-400">Cosmic Apparel Co.</p>
+                    <p className="text-zinc-400">{item.brand || "Cosmic Apparel Co."}</p>
                   </div>
                   <div>
                     <h4 className="font-semibold text-zinc-300 mb-1">Manufacturer</h4>
@@ -236,6 +284,10 @@ export default function ProductDetailModal({
                   <div>
                     <h4 className="font-semibold text-zinc-300 mb-1">Weight</h4>
                     <p className="text-zinc-400">~180g (M size)</p>
+                  </div>
+                  <div>
+                    <h4 className="font-semibold text-zinc-300 mb-1">Fit</h4>
+                    <p className="text-zinc-400">{item.fit || "Regular Fit"}</p>
                   </div>
                 </div>
               </TabsContent>
