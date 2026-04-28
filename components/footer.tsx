@@ -7,29 +7,29 @@ import { Separator } from "@/components/ui/separator"
 import { Facebook, Twitter, Instagram, Youtube, Mail, Phone, MapPin, Palette, ArrowRight } from "lucide-react"
 
 const footerLinks = {
-  product: [
-    { name: "Outfit Builder", href: "/outfit-picker" },
+  shop: [
     { name: "Gallery", href: "/gallery" },
-    { name: "Customize", href: "/customize" },
-    { name: "Browse Gallery", href: "/gallery" },
+    { name: "Products", href: "/products" },
+    { name: "Outfit Builder", href: "/outfit-picker" },
+    { name: "3D Preview", href: "/3d-preview" },
   ],
-  company: [
+  account: [
     { name: "Dashboard", href: "/dashboard" },
-    { name: "Profile", href: "/profile" },
     { name: "Orders", href: "/orders" },
     { name: "Cart", href: "/cart" },
+    { name: "Profile", href: "/profile" },
   ],
   support: [
-    { name: "Settings", href: "/profile/settings" },
-    { name: "Checkout", href: "/checkout" },
-    { name: "Gallery", href: "/gallery" },
-    { name: "Browse Gallery", href: "/gallery" },
+    { name: "Help & FAQ", href: "#" },
+    { name: "Contact Us", href: "#" },
+    { name: "Shipping Info", href: "#" },
+    { name: "Size Guide", href: "#" },
   ],
   legal: [
-    { name: "Sign In", href: "/auth/login" },
-    { name: "Sign Up", href: "/auth/register" },
-    { name: "Dashboard", href: "/dashboard" },
-    { name: "Profile", href: "/profile" },
+    { name: "Privacy Policy", href: "#" },
+    { name: "Terms of Service", href: "#" },
+    { name: "Return Policy", href: "#" },
+    { name: "Cookie Policy", href: "#" },
   ],
 }
 
@@ -78,11 +78,11 @@ export default function Footer() {
             </div>
           </div>
 
-          {/* Product Links */}
+          {/* Shop Links */}
           <div className="space-y-4">
-            <h4 className="font-semibold text-white">Product</h4>
+            <h4 className="font-semibold text-white">Shop</h4>
             <ul className="space-y-3">
-              {footerLinks.product.map((link) => (
+              {footerLinks.shop.map((link) => (
                 <li key={link.name}>
                   <Link href={link.href} className="text-gray-400 hover:text-white transition-colors duration-200">
                     {link.name}
@@ -92,11 +92,11 @@ export default function Footer() {
             </ul>
           </div>
 
-          {/* Company Links */}
+          {/* Account Links */}
           <div className="space-y-4">
-            <h4 className="font-semibold text-white">Company</h4>
+            <h4 className="font-semibold text-white">Account</h4>
             <ul className="space-y-3">
-              {footerLinks.company.map((link) => (
+              {footerLinks.account.map((link) => (
                 <li key={link.name}>
                   <Link href={link.href} className="text-gray-400 hover:text-white transition-colors duration-200">
                     {link.name}
@@ -159,7 +159,7 @@ export default function Footer() {
       {/* Bottom Footer */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
         <div className="flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0">
-          <div className="text-gray-400 text-sm">© 2025 Cosmic Outfits. All rights reserved.</div>
+          <div className="text-gray-400 text-sm">© 2026 Cosmic Outfits. All rights reserved.</div>
 
           {/* Social Links */}
           <div className="flex space-x-4">

@@ -198,7 +198,7 @@ export default function TrendingOutfits() {
             >
               <Card className="overflow-hidden border border-gray-200 shadow-lg hover:shadow-2xl transition-all duration-300 bg-white hover:border-purple-300">
                 <div className="relative overflow-hidden">
-                  <Link href="/gallery">
+                  <Link href={`/gallery?search=${encodeURIComponent(outfit.title)}`}>
                     <Image
                       src={outfit.image || "/placeholder.svg"}
                       alt={outfit.title}
@@ -256,7 +256,7 @@ export default function TrendingOutfits() {
                 <CardContent className="p-6">
                   <div className="space-y-4">
                     <div>
-                      <Link href="/gallery">
+                      <Link href={`/gallery?search=${encodeURIComponent(outfit.title)}`}>
                         <h3 className="text-lg font-bold text-gray-900 hover:text-purple-700 transition-colors cursor-pointer">
                           {outfit.title}
                         </h3>
@@ -297,7 +297,7 @@ export default function TrendingOutfits() {
                           <span>{outfit.views.toLocaleString()}</span>
                         </div>
                       </div>
-                      <Link href="/gallery">
+                      <Link href={`/gallery?search=${encodeURIComponent(outfit.title)}`}>
                         <Button
                           size="sm"
                           className="bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white"

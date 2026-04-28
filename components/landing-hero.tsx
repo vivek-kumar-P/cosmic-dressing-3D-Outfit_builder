@@ -209,7 +209,7 @@ export default function LandingHero() {
                 variant="outline"
                 className="border-[#00C4B4] text-[#00C4B4] hover:bg-[#00C4B4]/10 bg-transparent"
               >
-                View All Gallery
+                View All Products
                 <ArrowRight className="ml-2 h-4 w-4" />
               </Button>
             </Link>
@@ -294,7 +294,7 @@ export default function LandingHero() {
                           <span className="text-lg text-gray-400 line-through">${product.originalPrice}</span>
                         )}
                       </div>
-                      <Link href={`/products/${product.id}`}>
+                      <Link href={`/gallery?search=${encodeURIComponent(product.name)}`}>
                         <Button size="sm" className="bg-gradient-to-r from-[#00C4B4] to-[#007BFF] text-white">
                           View Details
                         </Button>
